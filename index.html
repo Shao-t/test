@@ -1371,18 +1371,13 @@
     <div class="fb-box" role="dialog" aria-modal="true">
       <h3 id="auth-box-title">登入 SkyDex</h3>
       <div id="auth-step-email">
-        <input id="auth-email" type="email" placeholder="輸入你的 Email">
+        <p style="font-size:13px;color:#1d1d1f;margin-bottom:10px;">使用 Google 帳號登入，成就資料將自動同步到雲端。</p>
         <div class="fb-actions">
           <button type="button" class="fb-cancel-btn" onclick="authClose()">取消</button>
-          <button id="auth-send-btn" type="button" onclick="authSendLink()">寄送登入連結</button>
+          <button id="auth-google-btn" type="button" onclick="authLoginWithGoogle()">使用 Google 登入</button>
         </div>
       </div>
-      <div id="auth-step-sent" style="display:none">
-        <p style="font-size:13px;color:#1d1d1f;margin-bottom:10px;">登入連結已寄出，請到信箱點擊連結完成登入（連結有效 1 小時）。</p>
-        <div class="fb-actions">
-          <button type="button" class="fb-cancel-btn" onclick="authClose()">關閉</button>
-        </div>
-      </div>
+      <div id="auth-step-sent" style="display:none"></div>
       <div id="auth-step-loggedin" style="display:none">
         <p style="font-size:13px;color:#1d1d1f;margin-bottom:10px;">已登入：<span id="auth-current-email"></span></p>
         <div class="fb-actions">
@@ -3231,22 +3226,17 @@ function authFabClick() {
 function authClose() {
   document.getElementById('auth-overlay').classList.remove('show');
 }
-async function authSendLink() {
-  const email = document.getElementById('auth-email').value.trim();
+async function authLoginWithGoogle() {
   const msgEl = document.getElementById('auth-msg');
-  if (!email) { msgEl.textContent = '請輸入 Email'; msgEl.style.color = '#ef4444'; return; }
-  msgEl.textContent = '寄送中...'; msgEl.style.color = '#8496a9';
+  msgEl.textContent = '正在跳轉至 Google...'; msgEl.style.color = '#8496a9';
   try {
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.href }
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.href }
     });
     if (error) throw error;
-    document.getElementById('auth-step-email').style.display = 'none';
-    document.getElementById('auth-step-sent').style.display = 'block';
-    msgEl.textContent = '';
   } catch (error) {
-    msgEl.textContent = '寄送失敗，請稍後再試'; msgEl.style.color = '#ef4444';
+    msgEl.textContent = '登入失敗，請稍後再試'; msgEl.style.color = '#ef4444';
   }
 }
 async function authLogout() {
