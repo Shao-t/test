@@ -1,6 +1,6 @@
 // airline-data.js
 // Production-ready unified schema
-// Last updated: 2026-08-09 (airline legal/commercial/short-name normalization)
+// Last updated: 2026-08-16 (Cathay Pacific passenger network)
 // Schema version: 2.0
 //
 // Wave 3: Phnom Penh airport-code migration, non-stop/stopover modelling,
@@ -41,6 +41,7 @@ window.AIRLINE_META = {
   KE: { legalName:"大韓航空", commercialName:"Korean Air", shortName:"大韓航空", fullName:"Korean Air", hub:"ICN", alliance:"SkyTeam", color:"#5B9BD5", colorDim:"rgba(91,155,213,0.35)", hubCoords:[37.4602,126.4407] },
   MF: { legalName:"廈門航空有限公司", commercialName:"XiamenAir", shortName:"廈航", fullName:"XiamenAir", hub:"XMN", alliance:"SkyTeam", color:"#0072BC", colorDim:"rgba(0,114,188,0.35)", hubCoords:[24.544,118.1277] },
   TK: { legalName:"土耳其航空", commercialName:"Turkish Airlines", shortName:"土航", fullName:"Turkish Airlines", hub:"IST", alliance:"Star Alliance", color:"#E30A17", colorDim:"rgba(227,10,23,0.35)", hubCoords:[41.2753,28.7519] },
+  CX: { legalName:"國泰航空有限公司", commercialName:"Cathay Pacific", shortName:"國泰航空", fullName:"Cathay Pacific", hub:"HKG", alliance:"oneworld", color:"#006564", colorDim:"rgba(0,101,100,0.35)", hubCoords:[22.308,113.9185] },
 };
 
 window.AIRPORT_MASTER = {
@@ -84,17 +85,20 @@ window.AIRPORT_MASTER = {
   CGO: { city:"鄭州", airportName:"Zhengzhou Xinzheng International Airport", country:"China", coords:[34.5197,113.8409], region:"CHINA" },
   CGK: { city:"雅加達", airportName:"Soekarno-Hatta International Airport", country:"Indonesia", coords:[-6.1256,106.6559], region:"SOUTHEAST_ASIA" },
   CGQ: { city:"長春", airportName:"Changchun Longjia International Airport", country:"China", coords:[43.9962,125.685], region:"CHINA" },
+  CHC: { city:"基督城", airportName:"Christchurch Airport", country:"New Zealand", coords:[-43.4894,172.5322], region:"OCEANIA" },
   CJJ: { city:"清州", airportName:"Cheongju International Airport", country:"South Korea", coords:[36.7166,127.4992], region:"NORTHEAST_ASIA" },
   CJU: { city:"濟州", airportName:"Jeju International Airport", country:"South Korea", coords:[33.5113,126.493], region:"NORTHEAST_ASIA" },
   CLT: { city:"夏洛特", airportName:"Charlotte Douglas International Airport", country:"USA", coords:[35.2144,-80.9473], region:"NORTH_AMERICA" },
   CMB: { city:"可倫坡", airportName:"Bandaranaike International Airport", country:"Sri Lanka", coords:[7.1808,79.8842], region:"SOUTH_ASIA" },
   CMN: { city:"卡薩布蘭卡", airportName:"Mohammed V International Airport", country:"Morocco", coords:[33.3675,-7.59], region:"AFRICA" },
+  CKG: { city:"重慶", airportName:"Chongqing Jiangbei International Airport", country:"China", coords:[29.7192,106.6417], region:"CHINA" },
   CNX: { city:"清邁", airportName:"Chiang Mai International Airport", country:"Thailand", coords:[18.7668,98.9626], region:"SOUTHEAST_ASIA" },
   COK: { city:"科欽", airportName:"Cochin International Airport", country:"India", coords:[10.152,76.4019], region:"SOUTH_ASIA" },
   CPH: { city:"哥本哈根", airportName:"Copenhagen Airport", country:"Denmark", coords:[55.6181,12.6561], region:"EUROPE" },
   CRK: { city:"克拉克", airportName:"Clark International Airport", country:"Philippines", coords:[15.1858,120.5601], region:"PHILIPPINES" },
   CSX: { city:"長沙", airportName:"Changsha Huanghua International Airport", country:"China", coords:[28.1892,113.2196], region:"CHINA" },
   CTS: { city:"札幌新千歲", airportName:"New Chitose Airport", country:"Japan", coords:[42.7752,141.6923], region:"JAPAN" },
+  CNS: { city:"凱恩斯", airportName:"Cairns Airport", country:"Australia", coords:[-16.8858,145.7553], region:"OCEANIA" },
   CXR: { city:"芽莊", airportName:"Cam Ranh International Airport", country:"Vietnam", coords:[11.9982,109.2192], region:"SOUTHEAST_ASIA" },
   CTU: { city:"成都雙流", airportName:"Chengdu Shuangliu International Airport", country:"China", coords:[30.5785,103.9471], region:"CHINA" },
   DAC: { city:"達卡", airportName:"Hazrat Shahjalal International Airport", country:"Bangladesh", coords:[23.8433,90.3978], region:"SOUTH_ASIA" },
@@ -125,6 +129,7 @@ window.AIRPORT_MASTER = {
   GUM: { city:"關島", airportName:"Antonio B. Won Pat International Airport", country:"Guam", coords:[13.4834,144.796], region:"OCEANIA" },
   GVA: { city:"日內瓦", airportName:"Geneva Airport", country:"Switzerland", coords:[46.237,6.1089], region:"EUROPE" },
   GYD: { city:"巴庫", airportName:"Heydar Aliyev International Airport", country:"Azerbaijan", coords:[40.4675,50.0467], region:"CENTRAL_ASIA" },
+  HAK: { city:"海口", airportName:"Haikou Meilan International Airport", country:"China", coords:[19.9349,110.459], region:"CHINA" },
   HAN: { city:"河內", airportName:"Noi Bai International Airport", country:"Vietnam", coords:[21.2212,105.8072], region:"SOUTHEAST_ASIA" },
   HBE: { city:"阿拉曼", airportName:"Borg El Arab International Airport", country:"Egypt", coords:[30.9187,29.6964], region:"AFRICA" },
   HFE: { city:"合肥", airportName:"Hefei Xinqiao International Airport", country:"China", coords:[31.9878,116.9769], region:"CHINA" },
@@ -214,6 +219,7 @@ window.AIRPORT_MASTER = {
   OTP: { city:"布加勒斯特", airportName:"Henri Coanda International Airport", country:"Romania", coords:[44.5711,26.085], region:"EUROPE" },
   PEK: { city:"北京首都", airportName:"Beijing Capital International Airport", country:"China", coords:[40.0799,116.6031], region:"CHINA" },
   PEN: { city:"檳城", airportName:"Penang International Airport", country:"Malaysia", coords:[5.2971,100.2769], region:"SOUTHEAST_ASIA" },
+  PER: { city:"伯斯", airportName:"Perth Airport", country:"Australia", coords:[-31.9403,115.9672], region:"OCEANIA" },
   PEW: { city:"白沙瓦", airportName:"Bacha Khan International Airport", country:"Pakistan", coords:[33.9939,71.5145], region:"SOUTH_ASIA" },
   PHX: { city:"鳳凰城", airportName:"Phoenix Sky Harbor International Airport", country:"USA", coords:[33.4342,-112.0116], region:"NORTH_AMERICA" },
   PKX: { city:"北京大興", airportName:"Beijing Daxing International Airport", country:"China", coords:[39.5098,116.4105], region:"CHINA" },
@@ -259,6 +265,7 @@ window.AIRPORT_MASTER = {
   TTJ: { city:"鳥取", airportName:"Tottori Sand Dunes Conan Airport", country:"Japan", coords:[35.5306,134.1667], region:"JAPAN" },
   TUN: { city:"突尼斯", airportName:"Tunis-Carthage International Airport", country:"Tunisia", coords:[36.851,10.2272], region:"AFRICA" },
   UBN: { city:"烏蘭巴托", airportName:"Ulaanbaatar Chinggis Khaan International Airport", country:"Mongolia", coords:[47.6469,106.8198], region:"CENTRAL_ASIA" },
+  URC: { city:"烏魯木齊", airportName:"Urumqi Tianshan International Airport", country:"China", coords:[43.9071,87.4742], region:"CHINA" },
   UKB: { city:"神戶", airportName:"Kobe Airport", country:"Japan", coords:[34.6328,135.2238], region:"JAPAN" },
   ULN: { city:"烏蘭巴托", airportName:"Chinggis Khaan International Airport", country:"Mongolia", coords:[47.6469,106.8167], region:"CENTRAL_ASIA" },
   USN: { city:"蔚山", airportName:"Ulsan Airport", country:"South Korea", coords:[35.5935,129.3517], region:"NORTHEAST_ASIA" },
@@ -267,6 +274,7 @@ window.AIRPORT_MASTER = {
   VTE: { city:"萬象", airportName:"Wattay International Airport", country:"Laos", coords:[17.9883,102.563], region:"SOUTHEAST_ASIA" },
   WAW: { city:"華沙", airportName:"Warsaw Chopin Airport", country:"Poland", coords:[52.1657,20.9671], region:"EUROPE" },
   WEH: { city:"威海", airportName:"Weihai Dashuibo International Airport", country:"China", coords:[37.1873,122.2286], region:"CHINA" },
+  WNZ: { city:"溫州", airportName:"Wenzhou Longwan International Airport", country:"China", coords:[27.9122,120.852], region:"CHINA" },
   WUH: { city:"武漢", airportName:"Wuhan Tianhe International Airport", country:"China", coords:[30.7838,114.2081], region:"CHINA" },
   XIY: { city:"西安", airportName:"Xi'an Xianyang International Airport", country:"China", coords:[34.4471,108.7516], region:"CHINA" },
   XMN: { city:"廈門", airportName:"Xiamen Gaoqi International Airport", country:"China", coords:[24.544,118.1277], region:"CHINA" },
@@ -910,6 +918,48 @@ window.AIRLINE_DATA = {
       ...(effectiveDate ? { effectiveDate } : {}),
     });
   });
+})();
+
+// ─── 國泰航空 CX：香港出發實際承運客運航線 ────────────────────────────────
+// 依 2026-08 官方航點與班表整理；不含純貨運、HK Express 或其他聯營承運航班。
+(() => {
+  const routeGroups = [
+    ["ACTIVE", [
+      "PEK", "CTU", "CKG", "FOC", "CAN", "HAK", "HGH", "NKG", "NGB", "TAO",
+      "PVG", "SHA", "URC", "WNZ", "WUH", "XMN", "XIY", "CGO", "CSX",
+      "TPE", "KHH",
+      "FUK", "NGO", "KIX", "CTS", "HND", "NRT", "ICN",
+      "DPS", "CGK", "SUB", "KUL", "PEN", "SIN", "BKK", "HKT", "KTI", "MNL",
+      "CEB", "HAN", "SGN",
+      "DAC", "BLR", "MAA", "DEL", "HYD", "BOM", "KTM", "CMB",
+      "DXB", "RUH", "JNB",
+      "BNE", "MEL", "PER", "SYD", "AKL",
+      "BRU", "CDG", "FRA", "MUC", "AMS", "MXP", "BCN", "MAD", "ZRH", "LHR", "MAN",
+      "YYZ", "YVR", "BOS", "ORD", "DFW", "LAX", "JFK", "SFO", "SEA"
+    ]],
+    ["SEASONAL", ["ADL", "CNS", "CHC", "FCO"]],
+    ["SUSPENDED", ["TLV"]],
+  ];
+
+  window.AIRLINE_DATA.CX = routeGroups.flatMap(([status, destinations]) =>
+    destinations.map(iata => {
+      const airport = window.AIRPORT_MASTER[iata];
+      if (!airport) throw new Error(`CX route airport missing from AIRPORT_MASTER: ${iata}`);
+      return {
+        iata,
+        ...airport,
+        frequency: iata === "SEA" ? 5 : null,
+        frequencyType: "weekly",
+        lastUpdated: "2026-08",
+        flightNumbers: iata === "SEA" ? ["CX852"] : [],
+        origin: "HKG",
+        airline: "CX",
+        alliance: "oneworld",
+        nonstop: true,
+        status,
+      };
+    })
+  );
 })();
 
 // ─── 廈門航空 MF：三大基地國際／地區直飛航線 ─────────────────────────────

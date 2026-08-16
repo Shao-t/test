@@ -1224,6 +1224,106 @@
       .achievement-gallery-description { min-height: 0; }
     }
 
+    .achievement-gallery-button { position: relative; }
+    #auth-status-dot {
+      position: absolute; top: -3px; right: -3px; width: 9px; height: 9px;
+      border-radius: 50%; background: rgba(235,241,249,.28);
+      border: 1.5px solid rgba(8,16,28,.9);
+    }
+    #auth-status-dot.logged-in { background: #7cc68c; }
+
+    /* ---- Flight Log Panel ---- */
+    .flight-log-button {
+      display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px;
+      border-radius: 999px; border: 1px solid var(--deck-border);
+      background: rgba(255,255,255,.06); color: var(--deck-ink);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .flight-log-button:hover { background: rgba(255,255,255,.1); }
+    #flight-log-overlay {
+      position: fixed; inset: 0; z-index: 2100; display: none;
+      align-items: center; justify-content: center; padding: 24px;
+      background: rgba(2,7,16,.68); backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    #flight-log-overlay.show { display: flex; }
+    .flight-log-panel {
+      width: min(560px, 96vw); max-height: min(820px, 90vh); overflow: hidden;
+      display: flex; flex-direction: column; position: relative;
+      color: #f4f7fb; background: rgba(8,16,28,.96);
+      border: 1px solid rgba(255,255,255,.14); border-radius: 24px;
+      box-shadow: 0 28px 90px rgba(0,0,0,.5);
+    }
+    .flight-log-header {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 18px;
+      padding: 22px 24px 16px; border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .flight-log-eyebrow { color: #f0c252; font-size: 9px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .flight-log-header h2 { margin: 5px 0 0; font-size: 20px; }
+    .flight-log-close {
+      width: 32px; height: 32px; flex: 0 0 auto; border: 0; border-radius: 10px;
+      display: grid; place-items: center; color: var(--deck-muted); background: rgba(255,255,255,.07); cursor: pointer;
+    }
+    .flight-log-close:hover { color: var(--deck-ink); background: rgba(255,255,255,.12); }
+    .flight-log-body { overflow-y: auto; padding: 18px 24px 90px; }
+    .flight-log-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+    .flight-log-stat-card { background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 14px 12px; }
+    .flight-log-stat-card .num { font-size: 20px; font-weight: 800; line-height: 1; }
+    .flight-log-stat-card .num.gold { color: #f0c252; }
+    .flight-log-stat-card .num.teal { color: #7cc6ff; }
+    .flight-log-stat-card .label { font-size: 10px; color: rgba(235,241,249,.62); margin-top: 6px; }
+    .flight-log-section-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(235,241,249,.62); margin: 0 0 10px 2px; font-weight: 600; }
+    .flight-log-empty { text-align: center; color: rgba(235,241,249,.5); font-size: 12.5px; padding: 30px 10px; }
+    .flight-log-list { display: flex; flex-direction: column; gap: 12px; }
+    .flight-stub {
+      position: relative; background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 18px; display: grid; grid-template-columns: 1fr auto auto; align-items: center;
+    }
+    .flight-stub-main { padding: 14px 12px; min-width: 0; }
+    .flight-stub-route { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .flight-stub-iata { font-size: 18px; font-weight: 800; }
+    .flight-stub-arrow { color: rgba(235,241,249,.4); font-size: 12px; }
+    .flight-stub-meta { display: flex; gap: 12px; font-size: 10.5px; color: rgba(235,241,249,.6); flex-wrap: wrap; }
+    .flight-stub-meta b { color: var(--deck-ink); font-weight: 600; }
+    .flight-stub-tear {
+      padding: 0 12px; border-left: 1px dashed rgba(255,255,255,.18);
+      font-size: 10px; font-weight: 800; color: #f0c252; text-align: center; white-space: nowrap;
+    }
+    .flight-stub-del {
+      width: 32px; height: 32px; margin-right: 8px; border: 0; border-radius: 10px;
+      background: rgba(255,255,255,.06); color: rgba(235,241,249,.55); cursor: pointer;
+      display: grid; place-items: center; flex: 0 0 auto;
+    }
+    .flight-stub-del:hover { background: rgba(239,68,68,.18); color: #ff8a8a; }
+    .flight-log-fab {
+      position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
+      background: #f0c252; color: #1a1206; border: none; font-size: 24px; font-weight: 700;
+      cursor: pointer; box-shadow: 0 10px 26px rgba(240,194,82,.35); display: grid; place-items: center;
+    }
+    .flight-log-sheet-backdrop { position: fixed; inset: 0; background: rgba(2,4,9,.6); display: none; align-items: flex-end; justify-content: center; z-index: 2200; }
+    .flight-log-sheet-backdrop.show { display: flex; }
+    .flight-log-sheet { width: 100%; max-width: 560px; background: rgba(8,15,26,.98); border: 1px solid rgba(255,255,255,.14); border-bottom: none; border-radius: 20px 20px 0 0; padding: 18px 20px 26px; }
+    .flight-log-sheet h3 { margin: 0 0 14px; font-size: 15px; }
+    .flight-log-field-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .flight-log-field { flex: 1; }
+    .flight-log-field label { display: block; font-size: 10.5px; color: rgba(235,241,249,.6); margin-bottom: 5px; letter-spacing: .3px; text-transform: uppercase; }
+    .flight-log-field input {
+      width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+      border-radius: 10px; padding: 10px 11px; color: var(--deck-ink); font-size: 13.5px; font-family: inherit;
+    }
+    .flight-log-sheet-submit { width: 100%; margin-top: 8px; padding: 13px; border: none; border-radius: 12px; background: #f0c252; color: #1a1206; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .flight-log-sheet-msg { min-height: 16px; font-size: 11.5px; margin-top: 8px; text-align: center; }
+    .route-popup-log-btn {
+      margin-top: 10px; width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(240,194,82,.35);
+      background: rgba(240,194,82,.12); color: #f0c252; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .route-popup-log-btn:hover { background: rgba(240,194,82,.2); }
+    .route-popup-log-btn.done { border-color: rgba(124,198,140,.4); background: rgba(124,198,140,.14); color: #7cc68c; cursor: default; }
+    @media (max-width: 860px), (pointer: coarse) {
+      .flight-log-button-label { display: none; }
+      .flight-log-panel { width: 100%; max-height: 88vh; border-radius: 22px 22px 16px 16px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1258,21 +1358,22 @@
 
     </div>
     <div id="header-right">
-      <button class="fb-fab" id="auth-fab" title="登入" aria-label="登入" onclick="authFabClick()">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="8" cy="5.4" r="2.6" stroke="currentColor" stroke-width="1.2"/>
-          <path d="M2.6 13.4c1-2.6 3-3.9 5.4-3.9s4.4 1.3 5.4 3.9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <button class="flight-log-button" id="flight-log-button" type="button" onclick="openFlightLogPanel()"
+        aria-haspopup="dialog" aria-controls="flight-log-overlay" aria-expanded="false">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M1.5 8.5l5-1.2 3-5.3 1.5.4-1.7 5 4-1 1.3.9-4.6 2.7-2.3 4.8-1.4-.4.8-3.5-4.6.6-1-1.6 3.8-1.2-3.8-.2z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/>
         </svg>
-        <span class="fb-fab-label" id="auth-fab-label">登入</span>
+        <span class="flight-log-button-label">飛行紀錄</span>
       </button>
       <button class="achievement-gallery-button" id="achievement-gallery-button" type="button"
-        onclick="openAchievementGallery()" aria-haspopup="dialog" aria-controls="achievement-gallery-overlay" aria-expanded="false">
+        onclick="handleAchievementButtonClick()" aria-haspopup="dialog" aria-controls="achievement-gallery-overlay" aria-expanded="false">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M5 2h6v3.2c0 2-1.34 3.66-3 3.66S5 7.2 5 5.2V2Z" stroke="currentColor" stroke-width="1.2"/>
           <path d="M5 3.2H2.8c0 2.3.9 3.65 2.85 4.1M11 3.2h2.2c0 2.3-.9 3.65-2.85 4.1M8 8.9v2.25M5.5 14h5M6.1 11.15h3.8V14H6.1v-2.85Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span class="achievement-gallery-button-label">成就</span>
+        <span class="achievement-gallery-button-label" id="achievement-gallery-button-label">成就</span>
         <span id="achievement-gallery-button-count">0/9</span>
+        <span id="auth-status-dot" aria-hidden="true"></span>
       </button>
       <button class="fb-fab" id="fb-fab" title="問題回報 / 建議" aria-label="問題回報 / 建議" onclick="fbOpen()">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1335,6 +1436,7 @@
       <span class="card-city" id="card-city"></span>
     </div>
     <div class="card-rows" id="card-rows"></div>
+    <button class="route-popup-log-btn" id="card-log-btn" style="margin-top:12px"></button>
   </div>
 
   <!-- Zoom -->
@@ -1389,6 +1491,47 @@
     </div>
   </div>
 
+  <div id="flight-log-overlay" aria-hidden="true" onclick="handleFlightLogBackdrop(event)">
+    <div class="flight-log-panel" onclick="event.stopPropagation()">
+      <div class="flight-log-header">
+        <div>
+          <div class="flight-log-eyebrow">SkyDex · Flight Log</div>
+          <h2>飛行紀錄</h2>
+        </div>
+        <button class="flight-log-close" onclick="closeFlightLogPanel()" aria-label="關閉">✕</button>
+      </div>
+      <div class="flight-log-body">
+        <div class="flight-log-stats">
+          <div class="flight-log-stat-card"><div class="num gold" id="fl-stat-km">0</div><div class="label">累積公里數 KM</div></div>
+          <div class="flight-log-stat-card"><div class="num teal" id="fl-stat-countries">0</div><div class="label">造訪國家</div></div>
+          <div class="flight-log-stat-card"><div class="num" id="fl-stat-count">0</div><div class="label">飛行紀錄</div></div>
+        </div>
+        <div class="flight-log-section-label">紀錄清單</div>
+        <div class="flight-log-list" id="flight-log-list"></div>
+        <div class="flight-log-empty" id="flight-log-empty" style="display:none">
+          還沒有任何飛行紀錄。在地圖上點機場選「搭乘過」，或按右下角 + 手動新增。
+        </div>
+      </div>
+      <button class="flight-log-fab" onclick="openAddFlightSheet()" aria-label="新增飛行紀錄">+</button>
+    </div>
+  </div>
+
+  <div class="flight-log-sheet-backdrop" id="add-flight-sheet" onclick="if(event.target===this) closeAddFlightSheet()">
+    <div class="flight-log-sheet" onclick="event.stopPropagation()">
+      <h3>新增飛行紀錄</h3>
+      <div class="flight-log-field-row">
+        <div class="flight-log-field"><label>出發 IATA</label><input id="af-dep" placeholder="TSA" maxlength="3"></div>
+        <div class="flight-log-field"><label>抵達 IATA</label><input id="af-arr" placeholder="PVG" maxlength="3"></div>
+      </div>
+      <div class="flight-log-field-row">
+        <div class="flight-log-field"><label>航班號（選填）</label><input id="af-flightno" placeholder="FM802"></div>
+        <div class="flight-log-field"><label>日期</label><input id="af-date" type="date"></div>
+      </div>
+      <button class="flight-log-sheet-submit" onclick="submitAddFlightSheet()">儲存紀錄</button>
+      <div class="flight-log-sheet-msg" id="af-msg"></div>
+    </div>
+  </div>
+
   <div id="achievement-gallery-overlay" aria-hidden="true" onclick="handleAchievementGalleryBackdrop(event)">
     <section class="achievement-gallery-panel" role="dialog" aria-modal="true"
       aria-labelledby="achievement-gallery-title" aria-describedby="achievement-gallery-summary">
@@ -1397,6 +1540,12 @@
           <div class="achievement-gallery-eyebrow">Achievement collection</div>
           <h2 id="achievement-gallery-title">成就圖鑑</h2>
           <div id="achievement-gallery-summary"></div>
+        </div>
+        <div id="achievement-gallery-auth-row" style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11px;color:var(--deck-muted)">
+          <span id="achievement-gallery-auth-status">尚未登入</span>
+          <button id="achievement-gallery-auth-action" type="button"
+            style="border:0;background:rgba(255,255,255,.08);color:var(--deck-ink);border-radius:8px;padding:3px 9px;font-size:10.5px;cursor:pointer"
+            onclick="handleAchievementAuthAction()">登入</button>
         </div>
         <button class="achievement-gallery-close" id="achievement-gallery-close" type="button"
           onclick="closeAchievementGallery()" aria-label="關閉成就圖鑑" title="關閉成就圖鑑">
@@ -1772,6 +1921,7 @@ function routeRows(d, id) {
   return rows;
 }
 function routePopupHtml(d, id) {
+  const primaryFlightNo = (routeServicePatterns(d)[0]?.flightNumbers || [])[0] || "";
   return `
     <div class="route-popup-shell">
       <div class="route-popup-header">
@@ -1783,6 +1933,10 @@ function routePopupHtml(d, id) {
           `<div class="route-popup-row"><span class="route-popup-key">${k}</span><span class="route-popup-val">${v}</span></div>`
         ).join("")}
       </div>
+      <button class="route-popup-log-btn" id="route-log-btn"
+        onclick="logFlightFromPopup('${d.origin || "TPE"}','${d.iata}','${id}','${primaryFlightNo.replace(/'/g, "")}')">
+        ✓ 搭乘過，加入飛行紀錄
+      </button>
     </div>
   `;
 }
@@ -1847,6 +2001,13 @@ function renderInfoCard(d, id) {
   rowsEl.innerHTML = rows.map(([k, v]) =>
     `<div class="card-row"><span class="card-key">${k}</span><span class="card-val">${v}</span></div>`
   ).join("");
+
+  const primaryFlightNo = (routeServicePatterns(d)[0]?.flightNumbers || [])[0] || "";
+  const logBtn = document.getElementById("card-log-btn");
+  logBtn.classList.remove("done");
+  logBtn.disabled = false;
+  logBtn.textContent = "✓ 搭乘過，加入飛行紀錄";
+  logBtn.onclick = () => logFlightFromPopup(d.origin || "TPE", d.iata, id, primaryFlightNo, logBtn);
 
   card.style.opacity = "1";
   card.style.transform = window.matchMedia("(max-width: 860px), (pointer: coarse)").matches
@@ -3215,6 +3376,181 @@ function flyTo(iata, origin) {
 }
 
 // ---- 登入 UI ----
+// ---- 飛行紀錄（Flight Log）----
+let flightLogsCache = [];
+
+function haversineKm(a, b) {
+  if (!a || !b) return 0;
+  const R = 6371;
+  const toRad = deg => deg * Math.PI / 180;
+  const dLat = toRad(b[0] - a[0]);
+  const dLng = toRad(b[1] - a[1]);
+  const lat1 = toRad(a[0]), lat2 = toRad(b[0]);
+  const h = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1-h)));
+}
+
+async function logFlightFromPopup(depIata, arrIata, airlineId, flightNo, btnEl) {
+  const btn = btnEl || document.getElementById('route-log-btn');
+  if (!currentAuthUser) {
+    if (btn) { btn.textContent = '請先登入才能記錄'; }
+    authFabClick();
+    return;
+  }
+  if (btn) { btn.disabled = true; btn.textContent = '記錄中...'; }
+  try {
+    const depCoord = (window.AIRPORT_MASTER?.[depIata]?.coords) || null;
+    const arrCoord = (window.AIRPORT_MASTER?.[arrIata]?.coords) || null;
+    const distanceKm = haversineKm(depCoord, arrCoord);
+    const { error } = await supabaseClient.from('flight_logs').insert({
+      user_id: currentAuthUser.id,
+      dep_iata: depIata,
+      arr_iata: arrIata,
+      airline_id: airlineId || null,
+      flight_no: flightNo || null,
+      distance_km: distanceKm || null
+    });
+    if (error) throw error;
+    if (btn) { btn.textContent = '✓ 已加入飛行紀錄'; btn.classList.add('done'); }
+    flightLogsCache = null; // 強制下次開面板時重新抓
+  } catch (error) {
+    console.warn('Flight log insert failed.', error);
+    if (btn) { btn.disabled = false; btn.textContent = '✓ 搭乘過，加入飛行紀錄'; }
+  }
+}
+
+async function fetchFlightLogs() {
+  if (!currentAuthUser) return [];
+  try {
+    const { data, error } = await supabaseClient
+      .from('flight_logs')
+      .select('*')
+      .eq('user_id', currentAuthUser.id)
+      .order('flight_date', { ascending: false })
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.warn('Flight log fetch failed.', error);
+    return [];
+  }
+}
+
+function airportLabel(iata) {
+  return window.AIRPORT_MASTER?.[iata]?.city ? `${iata}` : iata;
+}
+
+function renderFlightLogPanel() {
+  const totalKm = flightLogsCache.reduce((sum, r) => sum + (r.distance_km || 0), 0);
+  const countries = new Set();
+  flightLogsCache.forEach(r => {
+    const c1 = window.AIRPORT_MASTER?.[r.dep_iata]?.country;
+    const c2 = window.AIRPORT_MASTER?.[r.arr_iata]?.country;
+    if (c1) countries.add(c1);
+    if (c2) countries.add(c2);
+  });
+  document.getElementById('fl-stat-km').textContent = totalKm.toLocaleString();
+  document.getElementById('fl-stat-countries').textContent = countries.size;
+  document.getElementById('fl-stat-count').textContent = flightLogsCache.length;
+
+  const listEl = document.getElementById('flight-log-list');
+  const emptyEl = document.getElementById('flight-log-empty');
+  if (!flightLogsCache.length) {
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  listEl.innerHTML = flightLogsCache.map(r => {
+    const airlineName = (window.AIRLINE_META?.[r.airline_id]?.shortName) || r.airline_id || '';
+    return `
+      <div class="flight-stub">
+        <div class="flight-stub-main">
+          <div class="flight-stub-route">
+            <span class="flight-stub-iata">${r.dep_iata}</span>
+            <span class="flight-stub-arrow">→</span>
+            <span class="flight-stub-iata">${r.arr_iata}</span>
+          </div>
+          <div class="flight-stub-meta">
+            <span><b>${r.flight_date}</b></span>
+            ${airlineName ? `<span>${airlineName}</span>` : ''}
+            ${r.distance_km ? `<span>${r.distance_km.toLocaleString()} km</span>` : ''}
+          </div>
+        </div>
+        <div class="flight-stub-tear">${r.flight_no || ''}</div>
+        <button class="flight-stub-del" onclick="deleteFlightLog('${r.id}')" aria-label="刪除紀錄">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.6 9h5.8l.6-9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+async function openFlightLogPanel() {
+  if (!currentAuthUser) { authFabClick(); return; }
+  document.getElementById('flight-log-overlay').classList.add('show');
+  if (!flightLogsCache) flightLogsCache = [];
+  flightLogsCache = await fetchFlightLogs();
+  renderFlightLogPanel();
+}
+function closeFlightLogPanel() {
+  document.getElementById('flight-log-overlay').classList.remove('show');
+}
+function handleFlightLogBackdrop(event) {
+  if (event.target?.id === 'flight-log-overlay') closeFlightLogPanel();
+}
+
+async function deleteFlightLog(id) {
+  try {
+    const { error } = await supabaseClient.from('flight_logs').delete().eq('id', id);
+    if (error) throw error;
+    flightLogsCache = flightLogsCache.filter(r => r.id !== id);
+    renderFlightLogPanel();
+  } catch (error) {
+    console.warn('Flight log delete failed.', error);
+  }
+}
+
+function openAddFlightSheet() {
+  document.getElementById('af-msg').textContent = '';
+  document.getElementById('af-date').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('add-flight-sheet').classList.add('show');
+}
+function closeAddFlightSheet() {
+  document.getElementById('add-flight-sheet').classList.remove('show');
+}
+async function submitAddFlightSheet() {
+  const dep = document.getElementById('af-dep').value.trim().toUpperCase();
+  const arr = document.getElementById('af-arr').value.trim().toUpperCase();
+  const flightNo = document.getElementById('af-flightno').value.trim();
+  const date = document.getElementById('af-date').value;
+  const msgEl = document.getElementById('af-msg');
+  if (!dep || !arr || dep.length !== 3 || arr.length !== 3) {
+    msgEl.textContent = '請輸入正確的三碼機場代碼'; msgEl.style.color = '#ef4444'; return;
+  }
+  if (!window.AIRPORT_MASTER?.[dep] || !window.AIRPORT_MASTER?.[arr]) {
+    msgEl.textContent = '機場代碼查無資料'; msgEl.style.color = '#ef4444'; return;
+  }
+  msgEl.textContent = '儲存中...'; msgEl.style.color = 'rgba(235,241,249,.6)';
+  try {
+    const distanceKm = haversineKm(window.AIRPORT_MASTER[dep].coords, window.AIRPORT_MASTER[arr].coords);
+    const { error } = await supabaseClient.from('flight_logs').insert({
+      user_id: currentAuthUser.id,
+      dep_iata: dep,
+      arr_iata: arr,
+      flight_no: flightNo || null,
+      flight_date: date || new Date().toISOString().slice(0, 10),
+      distance_km: distanceKm || null
+    });
+    if (error) throw error;
+    closeAddFlightSheet();
+    flightLogsCache = await fetchFlightLogs();
+    renderFlightLogPanel();
+  } catch (error) {
+    msgEl.textContent = '儲存失敗，請稍後再試'; msgEl.style.color = '#ef4444';
+  }
+}
+
 function authFabClick() {
   document.getElementById('auth-overlay').classList.add('show');
   document.getElementById('auth-msg').textContent = '';
@@ -3245,8 +3581,22 @@ async function authLogout() {
 }
 function updateAuthUI(user) {
   currentAuthUser = user;
-  const label = document.getElementById('auth-fab-label');
-  label.textContent = user ? (user.email || '已登入') : '登入';
+  const dot = document.getElementById('auth-status-dot');
+  if (dot) dot.classList.toggle('logged-in', !!user);
+  const galleryStatus = document.getElementById('achievement-gallery-auth-status');
+  const galleryAction = document.getElementById('achievement-gallery-auth-action');
+  if (galleryStatus) galleryStatus.textContent = user ? (user.email || '已登入') : '尚未登入，成就僅存於本機';
+  if (galleryAction) galleryAction.textContent = user ? '登出' : '登入';
+}
+function handleAchievementButtonClick() {
+  openAchievementGallery();
+}
+function handleAchievementAuthAction() {
+  if (currentAuthUser) {
+    authLogout();
+  } else {
+    authFabClick();
+  }
 }
 supabaseClient.auth.onAuthStateChange((event, session) => {
   const user = session?.user || null;
