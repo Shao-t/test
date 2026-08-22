@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="airline-data.js?v=20260809-airline-names"></script>
+  <script src="airline-data.js?v=20260816-cathay"></script>
   <script>
     // Supabase 專案連線設定（anon public key，可公開放在前端）
     const SUPABASE_URL = "https://zpdsjrfcpkoogfxkawne.supabase.co";
@@ -77,6 +77,33 @@
     .route-popup .leaflet-popup-tip {
       background: rgba(255,255,255,0.94);
       box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+    }
+    #route-popup-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 36;
+      pointer-events: none;
+    }
+    #route-popup-layer .route-popup-portal {
+      position: absolute;
+      margin: 0;
+      pointer-events: auto;
+    }
+    #route-popup-layer .leaflet-popup-tip-container {
+      position: absolute;
+      left: var(--route-popup-tip-left, 50%);
+      width: 40px;
+      height: 20px;
+      margin-left: -20px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    #route-popup-layer .leaflet-popup-tip {
+      width: 17px;
+      height: 17px;
+      margin: -10px auto 0;
+      padding: 1px;
+      transform: rotate(45deg);
     }
 
     /* Kinetics B + C: marker spring feedback, popup spring entrance and route drawing */
@@ -541,6 +568,7 @@
       display: none; align-items: center; justify-content: center; z-index: 40;
     }
     .fb-overlay.show { display: flex; }
+    #auth-overlay { z-index: 2300; }
     .fb-box {
       background: rgba(255,255,255,0.96);
       backdrop-filter: blur(20px) saturate(180%);
@@ -1125,11 +1153,27 @@
     #achievement-gallery-overlay.show { display: flex; }
     .achievement-gallery-panel {
       width: min(940px, 96vw); max-height: min(820px, 90vh); overflow: hidden;
-      display: flex; flex-direction: column;
+      display: flex; flex-direction: column; position: relative;
       color: #f4f7fb; background: rgba(8,16,28,.96);
       border: 1px solid rgba(255,255,255,.14); border-radius: 24px;
       box-shadow: 0 28px 90px rgba(0,0,0,.5);
     }
+    .gallery-tabbar {
+      display: flex; gap: 6px; padding: 0 24px; border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .gallery-tab-btn {
+      border: 0; background: transparent; color: rgba(235,241,249,.55);
+      font-size: 12.5px; font-weight: 700; padding: 10px 4px 12px; cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .gallery-tab-btn.active { color: #f0c252; border-bottom-color: #f0c252; }
+    .gallery-tab-panel {
+      display: none;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .gallery-tab-panel.active { display: flex; flex-direction: column; }
     .achievement-gallery-header {
       display: flex; align-items: flex-start; justify-content: space-between; gap: 18px;
       padding: 22px 24px 18px; border-bottom: 1px solid rgba(255,255,255,.1);
@@ -1153,8 +1197,12 @@
       outline: 3px solid rgba(240,194,82,.88); outline-offset: 3px;
     }
     #achievement-gallery-grid {
-      overflow-y: auto; padding: 20px 24px 26px;
+      flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 20px 24px 26px;
       display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px;
+      overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y;
+    }
+    #gallery-tab-flight {
+      overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y;
     }
     .achievement-gallery-card {
       min-width: 0; padding: 16px; border-radius: 18px;
@@ -1232,40 +1280,7 @@
     }
     #auth-status-dot.logged-in { background: #7cc68c; }
 
-    /* ---- Flight Log Panel ---- */
-    .flight-log-button {
-      display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px;
-      border-radius: 999px; border: 1px solid var(--deck-border);
-      background: rgba(255,255,255,.06); color: var(--deck-ink);
-      font-size: 12px; font-weight: 600; cursor: pointer;
-    }
-    .flight-log-button:hover { background: rgba(255,255,255,.1); }
-    #flight-log-overlay {
-      position: fixed; inset: 0; z-index: 2100; display: none;
-      align-items: center; justify-content: center; padding: 24px;
-      background: rgba(2,7,16,.68); backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-    }
-    #flight-log-overlay.show { display: flex; }
-    .flight-log-panel {
-      width: min(560px, 96vw); max-height: min(820px, 90vh); overflow: hidden;
-      display: flex; flex-direction: column; position: relative;
-      color: #f4f7fb; background: rgba(8,16,28,.96);
-      border: 1px solid rgba(255,255,255,.14); border-radius: 24px;
-      box-shadow: 0 28px 90px rgba(0,0,0,.5);
-    }
-    .flight-log-header {
-      display: flex; align-items: flex-start; justify-content: space-between; gap: 18px;
-      padding: 22px 24px 16px; border-bottom: 1px solid rgba(255,255,255,.1);
-    }
-    .flight-log-eyebrow { color: #f0c252; font-size: 9px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
-    .flight-log-header h2 { margin: 5px 0 0; font-size: 20px; }
-    .flight-log-close {
-      width: 32px; height: 32px; flex: 0 0 auto; border: 0; border-radius: 10px;
-      display: grid; place-items: center; color: var(--deck-muted); background: rgba(255,255,255,.07); cursor: pointer;
-    }
-    .flight-log-close:hover { color: var(--deck-ink); background: rgba(255,255,255,.12); }
-    .flight-log-body { overflow-y: auto; padding: 18px 24px 90px; }
+    /* ---- Flight Log (now a tab inside achievement gallery) ---- */
     .flight-log-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
     .flight-log-stat-card { background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 14px 12px; }
     .flight-log-stat-card .num { font-size: 20px; font-weight: 800; line-height: 1; }
@@ -1330,6 +1345,7 @@
 <div id="app">
   <div id="map"></div>
   <div id="map-shade" aria-hidden="true"></div>
+  <div id="route-popup-layer" aria-live="polite"></div>
 
   <!-- Header -->
   <div id="header">
@@ -1358,13 +1374,6 @@
 
     </div>
     <div id="header-right">
-      <button class="flight-log-button" id="flight-log-button" type="button" onclick="openFlightLogPanel()"
-        aria-haspopup="dialog" aria-controls="flight-log-overlay" aria-expanded="false">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M1.5 8.5l5-1.2 3-5.3 1.5.4-1.7 5 4-1 1.3.9-4.6 2.7-2.3 4.8-1.4-.4.8-3.5-4.6.6-1-1.6 3.8-1.2-3.8-.2z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/>
-        </svg>
-        <span class="flight-log-button-label">飛行紀錄</span>
-      </button>
       <button class="achievement-gallery-button" id="achievement-gallery-button" type="button"
         onclick="handleAchievementButtonClick()" aria-haspopup="dialog" aria-controls="achievement-gallery-overlay" aria-expanded="false">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -1491,31 +1500,6 @@
     </div>
   </div>
 
-  <div id="flight-log-overlay" aria-hidden="true" onclick="handleFlightLogBackdrop(event)">
-    <div class="flight-log-panel" onclick="event.stopPropagation()">
-      <div class="flight-log-header">
-        <div>
-          <div class="flight-log-eyebrow">SkyDex · Flight Log</div>
-          <h2>飛行紀錄</h2>
-        </div>
-        <button class="flight-log-close" onclick="closeFlightLogPanel()" aria-label="關閉">✕</button>
-      </div>
-      <div class="flight-log-body">
-        <div class="flight-log-stats">
-          <div class="flight-log-stat-card"><div class="num gold" id="fl-stat-km">0</div><div class="label">累積公里數 KM</div></div>
-          <div class="flight-log-stat-card"><div class="num teal" id="fl-stat-countries">0</div><div class="label">造訪國家</div></div>
-          <div class="flight-log-stat-card"><div class="num" id="fl-stat-count">0</div><div class="label">飛行紀錄</div></div>
-        </div>
-        <div class="flight-log-section-label">紀錄清單</div>
-        <div class="flight-log-list" id="flight-log-list"></div>
-        <div class="flight-log-empty" id="flight-log-empty" style="display:none">
-          還沒有任何飛行紀錄。在地圖上點機場選「搭乘過」，或按右下角 + 手動新增。
-        </div>
-      </div>
-      <button class="flight-log-fab" onclick="openAddFlightSheet()" aria-label="新增飛行紀錄">+</button>
-    </div>
-  </div>
-
   <div class="flight-log-sheet-backdrop" id="add-flight-sheet" onclick="if(event.target===this) closeAddFlightSheet()">
     <div class="flight-log-sheet" onclick="event.stopPropagation()">
       <h3>新增飛行紀錄</h3>
@@ -1552,7 +1536,28 @@
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
         </button>
       </header>
-      <div id="achievement-gallery-grid"></div>
+      <div class="gallery-tabbar">
+        <button class="gallery-tab-btn active" id="gallery-tab-btn-achievement" onclick="switchGalleryTab('achievement')">成就圖鑑</button>
+        <button class="gallery-tab-btn" id="gallery-tab-btn-flight" onclick="switchGalleryTab('flight')">飛行紀錄</button>
+      </div>
+      <div class="gallery-tab-panel active" id="gallery-tab-achievement">
+        <div id="achievement-gallery-grid"></div>
+      </div>
+      <div class="gallery-tab-panel" id="gallery-tab-flight" style="overflow-y:auto">
+        <div style="padding:18px 24px 90px">
+          <div class="flight-log-stats">
+            <div class="flight-log-stat-card"><div class="num gold" id="fl-stat-km">0</div><div class="label">累積公里數 KM</div></div>
+            <div class="flight-log-stat-card"><div class="num teal" id="fl-stat-countries">0</div><div class="label">造訪國家</div></div>
+            <div class="flight-log-stat-card"><div class="num" id="fl-stat-count">0</div><div class="label">飛行紀錄</div></div>
+          </div>
+          <div class="flight-log-section-label">紀錄清單</div>
+          <div class="flight-log-list" id="flight-log-list"></div>
+          <div class="flight-log-empty" id="flight-log-empty" style="display:none">
+            還沒有任何飛行紀錄。在地圖上點機場選「搭乘過」，或按右下角 + 手動新增。
+          </div>
+        </div>
+        <button class="flight-log-fab" onclick="openAddFlightSheet()" aria-label="新增飛行紀錄">+</button>
+      </div>
     </section>
   </div>
 
@@ -1962,15 +1967,7 @@ function showOriginPicker(candidates, id) {
   closeRoutePopup();
   originPickerCandidates = candidates;
   const viewCoord = mapRouteCoord(candidates[0], id);
-  activeRoutePopup = L.popup({
-    className: "route-popup",
-    closeButton: false,
-    autoClose: false,
-    closeOnClick: false,
-    autoPan: true,
-    keepInView: true,
-    offset: isTouchDevice ? [18, 0] : [14, 0]
-  }).setLatLng(viewCoord).setContent(originPickerHtml(candidates)).openOn(map);
+  activeRoutePopup = openRouteOverlayPopup(originPickerHtml(candidates), viewCoord);
   activeRoutePopup._pickerAirlineId = id;
 }
 function pickOrigin(idx) {
@@ -2024,13 +2021,55 @@ function hideInfoCard() {
 function closeRoutePopup() {
   cancelRouteDrawAnimation();
   if (activeRoutePopup) {
-    map.closePopup(activeRoutePopup);
+    activeRoutePopup.element?.remove();
     activeRoutePopup = null;
   }
   if (activeLine) {
     map.removeLayer(activeLine);
     activeLine = null;
   }
+}
+function syncRoutePopupPosition() {
+  if (!activeRoutePopup?.element || !map) return;
+  const mapRect = map.getContainer().getBoundingClientRect();
+  const point = map.latLngToContainerPoint(activeRoutePopup.latlng);
+  const anchorX = mapRect.left + point.x;
+  const anchorY = mapRect.top + point.y;
+  const popup = activeRoutePopup.element;
+  const popupRect = popup.getBoundingClientRect();
+  const gap = isTouchDevice ? 18 : 14;
+  const edge = 8;
+  const left = Math.min(
+    Math.max(anchorX - popupRect.width / 2, edge),
+    Math.max(edge, window.innerWidth - popupRect.width - edge),
+  );
+  const top = Math.min(
+    Math.max(anchorY - popupRect.height - gap, edge),
+    Math.max(edge, window.innerHeight - popupRect.height - edge),
+  );
+  popup.style.left = `${left}px`;
+  popup.style.top = `${top}px`;
+  popup.style.setProperty(
+    "--route-popup-tip-left",
+    `${Math.min(Math.max(anchorX - left, 22), Math.max(22, popupRect.width - 22))}px`,
+  );
+}
+function openRouteOverlayPopup(html, latlng) {
+  const layer = document.getElementById("route-popup-layer");
+  if (!layer) return null;
+  const element = document.createElement("div");
+  element.className = "leaflet-popup route-popup route-popup-portal";
+  element.setAttribute("role", "dialog");
+  element.innerHTML = `
+    <div class="leaflet-popup-content-wrapper">
+      <div class="leaflet-popup-content">${html}</div>
+    </div>
+    <div class="leaflet-popup-tip-container"><div class="leaflet-popup-tip"></div></div>
+  `;
+  layer.replaceChildren(element);
+  const popup = { element, latlng };
+  window.requestAnimationFrame(syncRoutePopupPosition);
+  return popup;
 }
 function routePatternMapPoints(d, id, pattern) {
   const meta = AIRLINE_META_INFO[id] || {};
@@ -2113,15 +2152,7 @@ function openRoutePopup(d, id, showPopup = true) {
   activeLine = L.layerGroup(routeLayers).addTo(map);
   animateRouteDraw(routeLines[0], d, id);
   if (showPopup) {
-    activeRoutePopup = L.popup({
-      className: "route-popup",
-      closeButton: false,
-      autoClose: false,
-      closeOnClick: false,
-      autoPan: true,
-      keepInView: true,
-      offset: [14, 0]
-    }).setLatLng(viewCoord).setContent(routePopupHtml(d, id)).openOn(map);
+    activeRoutePopup = openRouteOverlayPopup(routePopupHtml(d, id), viewCoord);
   }
 }
 
@@ -2160,6 +2191,7 @@ const HUB_COORDS = {
   XMN: [24.5440, 118.1277],
   FOC: [25.9352, 119.6630],
   HGH: [30.2295, 120.4344],
+  HKG: [22.3080, 113.9185],
 };
 const HUB_LABELS = {
   IST: "IST 伊斯坦堡",
@@ -2190,10 +2222,11 @@ const HUB_LABELS = {
   XMN: "XMN 廈門",
   FOC: "FOC 福州",
   HGH: "HGH 杭州",
+  HKG: "HKG 香港",
   BOTH: "松山／桃園雙樞紐",
 };
 // 所有航空公司代碼統一在此維護，新增/移除航空公司只需改這裡
-const AIRLINE_IDS = ["JX","BR","CI","MF","MU","TK","GK","EY","IT","KE"];
+const AIRLINE_IDS = ["JX","BR","CI","CX","MF","MU","TK","GK","EY","IT","KE"];
 const AIRLINE_META_INFO = window.AIRLINE_META || {};
 const AIRLINES = Object.fromEntries(AIRLINE_IDS.map(id => [id, AIRLINE_DATA[id] || []]));
 
@@ -2426,6 +2459,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   map = L.map("map", { worldCopyJump: false, minZoom: 2, zoomControl: false }).setView([25, 115], 3);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { opacity: 0.9 }).addTo(map);
+  map.on("move zoom resize", syncRoutePopupPosition);
   map.on("click", () => {
     hideInfoCard();
     closeRoutePopup();
@@ -2505,6 +2539,8 @@ window.addEventListener("DOMContentLoaded", () => {
     .bindTooltip("AUH 阿布達比", { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["IT_TPE"] = L.circleMarker(HUB_COORDS.TPE, { radius:8, color:"#F6A800", fillColor:"#F6A800", fillOpacity:1, weight:2, interactive:false })
     .bindTooltip("TPE 桃園", { permanent:true, direction:"right", offset:[9,0] });
+  hubMarkers["CX_HKG"] = L.circleMarker(HUB_COORDS.HKG, { radius:8, color:"#006564", fillColor:"#006564", fillOpacity:1, weight:2, interactive:false })
+    .bindTooltip("HKG 香港", { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["TK_IST"] = L.circleMarker(HUB_COORDS.IST, { radius:8, color:"#E30A17", fillColor:"#E30A17", fillOpacity:1, weight:2, interactive:false })
     .bindTooltip("IST 伊斯坦堡", { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["IT_TNN"] = L.circleMarker(HUB_COORDS.TNN, { radius:6, color:"#F6A800", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
@@ -3035,10 +3071,23 @@ function openAchievementGallery() {
   const button = document.getElementById("achievement-gallery-button");
   if (!overlay) return;
   achievementGalleryReturnFocus = document.activeElement;
+  switchGalleryTab("achievement");
   overlay.classList.add("show");
   overlay.setAttribute("aria-hidden", "false");
   if (button) button.setAttribute("aria-expanded", "true");
   window.setTimeout(() => document.getElementById("achievement-gallery-close")?.focus(), 0);
+}
+
+function switchGalleryTab(tab) {
+  const isFlight = tab === "flight";
+  document.getElementById("gallery-tab-btn-achievement")?.classList.toggle("active", !isFlight);
+  document.getElementById("gallery-tab-btn-flight")?.classList.toggle("active", isFlight);
+  document.getElementById("gallery-tab-achievement")?.classList.toggle("active", !isFlight);
+  document.getElementById("gallery-tab-flight")?.classList.toggle("active", isFlight);
+  if (isFlight) {
+    if (!currentAuthUser) { authFabClick(); return; }
+    fetchFlightLogs().then(rows => { flightLogsCache = rows; renderFlightLogPanel(); });
+  }
 }
 
 function closeAchievementGallery() {
@@ -3060,6 +3109,13 @@ function handleAchievementGalleryBackdrop(event) {
 window.addEventListener("keydown", event => {
   const overlay = document.getElementById("achievement-gallery-overlay");
   if (!overlay?.classList.contains("show")) return;
+  if (document.getElementById("auth-overlay")?.classList.contains("show")) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      authClose();
+    }
+    return;
+  }
 
   if (event.key === "Escape") {
     event.preventDefault();
@@ -3486,20 +3542,6 @@ function renderFlightLogPanel() {
   }).join('');
 }
 
-async function openFlightLogPanel() {
-  if (!currentAuthUser) { authFabClick(); return; }
-  document.getElementById('flight-log-overlay').classList.add('show');
-  if (!flightLogsCache) flightLogsCache = [];
-  flightLogsCache = await fetchFlightLogs();
-  renderFlightLogPanel();
-}
-function closeFlightLogPanel() {
-  document.getElementById('flight-log-overlay').classList.remove('show');
-}
-function handleFlightLogBackdrop(event) {
-  if (event.target?.id === 'flight-log-overlay') closeFlightLogPanel();
-}
-
 async function deleteFlightLog(id) {
   try {
     const { error } = await supabaseClient.from('flight_logs').delete().eq('id', id);
@@ -3552,15 +3594,25 @@ async function submitAddFlightSheet() {
 }
 
 function authFabClick() {
-  document.getElementById('auth-overlay').classList.add('show');
+  const overlay = document.getElementById('auth-overlay');
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden', 'false');
   document.getElementById('auth-msg').textContent = '';
   document.getElementById('auth-step-email').style.display = currentAuthUser ? 'none' : 'block';
   document.getElementById('auth-step-sent').style.display = 'none';
   document.getElementById('auth-step-loggedin').style.display = currentAuthUser ? 'block' : 'none';
   if (currentAuthUser) document.getElementById('auth-current-email').textContent = currentAuthUser.email || '';
+  window.setTimeout(() => {
+    document.getElementById(currentAuthUser ? 'auth-logout-btn' : 'auth-google-btn')?.focus();
+  }, 0);
 }
 function authClose() {
-  document.getElementById('auth-overlay').classList.remove('show');
+  const overlay = document.getElementById('auth-overlay');
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden', 'true');
+  if (document.getElementById('achievement-gallery-overlay')?.classList.contains('show')) {
+    document.getElementById('achievement-gallery-auth-action')?.focus();
+  }
 }
 async function authLoginWithGoogle() {
   const msgEl = document.getElementById('auth-msg');
