@@ -1334,10 +1334,6 @@
     }
     .route-popup-log-btn:hover { background: rgba(240,194,82,.2); }
     .route-popup-log-btn.done { border-color: rgba(124,198,140,.4); background: rgba(124,198,140,.14); color: #7cc68c; cursor: default; }
-    @media (max-width: 860px), (pointer: coarse) {
-      .flight-log-button-label { display: none; }
-      .flight-log-panel { width: 100%; max-height: 88vh; border-radius: 22px 22px 16px 16px; }
-    }
 
   </style>
 </head>
@@ -3469,6 +3465,7 @@ async function logFlightFromPopup(depIata, arrIata, airlineId, flightNo, btnEl) 
     if (error) throw error;
     if (btn) { btn.textContent = '✓ 已加入飛行紀錄'; btn.classList.add('done'); }
     flightLogsCache = null; // 強制下次開面板時重新抓
+    trackAirportAchievements({ iata: arrIata }, airlineId); // 同步回頭觸發成就檢查，確保不漏掉
   } catch (error) {
     console.warn('Flight log insert failed.', error);
     if (btn) { btn.disabled = false; btn.textContent = '✓ 搭乘過，加入飛行紀錄'; }
@@ -3588,6 +3585,7 @@ async function submitAddFlightSheet() {
     closeAddFlightSheet();
     flightLogsCache = await fetchFlightLogs();
     renderFlightLogPanel();
+    trackAirportAchievements({ iata: arr }, null); // 手動新增紀錄同樣同步觸發成就檢查
   } catch (error) {
     msgEl.textContent = '儲存失敗，請稍後再試'; msgEl.style.color = '#ef4444';
   }
