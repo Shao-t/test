@@ -257,6 +257,14 @@
     .card-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
     .card-iata { font-size: 24px; font-weight: 600; letter-spacing: 0.04em; }
     .card-city { font-size: 13px; color: #86868b; }
+    .info-card-close {
+      width: 28px; height: 28px; border: 0; border-radius: 9px;
+      display: grid; place-items: center; flex: 0 0 auto; margin-left: auto;
+      align-self: flex-start;
+      color: #86868b; background: rgba(0,0,0,0.06); cursor: pointer;
+      transition: transform 160ms cubic-bezier(.22,1,.36,1), background 150ms ease;
+    }
+    .info-card-close:hover { color: #1d1d1f; background: rgba(0,0,0,0.12); transform: rotate(3deg) scale(1.04); }
     .card-rows { display: flex; flex-direction: column; gap: 7px; }
     .card-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
     .card-key { font-size: 11px; color: #86868b; flex-shrink: 0; }
@@ -789,6 +797,8 @@
     .card-header { margin-bottom: 12px; }
     .card-iata { color: var(--deck-ink); font-size: 27px; }
     .card-city { color: var(--deck-muted); }
+    .info-card-close { color: var(--deck-muted); background: rgba(255,255,255,.08); }
+    .info-card-close:hover { color: var(--deck-ink); background: rgba(255,255,255,.14); }
     .card-rows { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 18px; }
     .card-row { padding-top: 7px; border-top: 1px solid rgba(255,255,255,.08); }
     .card-key { color: var(--deck-muted); }
@@ -1159,14 +1169,17 @@
       box-shadow: 0 28px 90px rgba(0,0,0,.5);
     }
     .gallery-tabbar {
-      display: flex; gap: 6px; padding: 0 24px; border-bottom: 1px solid rgba(255,255,255,.1);
+      display: flex; gap: 4px; margin: 14px 24px 4px; padding: 4px;
+      background: rgba(255,255,255,.06); border-radius: 14px;
     }
     .gallery-tab-btn {
-      border: 0; background: transparent; color: rgba(235,241,249,.55);
-      font-size: 12.5px; font-weight: 700; padding: 10px 4px 12px; cursor: pointer;
-      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+      border: 0; background: transparent; color: rgba(235,241,249,.6);
+      font-size: 13px; font-weight: 700; padding: 10px 8px; cursor: pointer;
+      border-radius: 10px; transition: background .15s, color .15s;
     }
-    .gallery-tab-btn.active { color: #f0c252; border-bottom-color: #f0c252; }
+    .gallery-tab-btn.active { color: #1a1206; background: #f0c252; }
+    .gallery-tab-btn svg { flex: 0 0 auto; }
     .gallery-tab-panel {
       display: none;
       flex: 1 1 auto;
@@ -1270,6 +1283,8 @@
       .achievement-gallery-card { display: grid; grid-template-columns: 94px 1fr; column-gap: 12px; }
       .achievement-gallery-badge { grid-row: 1 / span 6; height: 100px; margin: 0; }
       .achievement-gallery-description { min-height: 0; }
+      .flight-log-records { grid-template-columns: repeat(2, 1fr); }
+      .flight-log-record-card:last-child { grid-column: 1 / -1; }
     }
 
     .achievement-gallery-button { position: relative; }
@@ -1282,6 +1297,26 @@
 
     /* ---- Flight Log (now a tab inside achievement gallery) ---- */
     .flight-log-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+    .flight-log-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .flight-log-year-filter { display: flex; gap: 6px; flex-wrap: wrap; }
+    .flight-log-year-chip {
+      border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.05); color: rgba(235,241,249,.72);
+      border-radius: 999px; padding: 5px 12px; font-size: 11px; font-weight: 600; cursor: pointer;
+      transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+    }
+    .flight-log-year-chip.active { background: #f0c252; color: #1a1206; border-color: #f0c252; }
+    .flight-log-map-toggle {
+      display: flex; align-items: center; gap: 6px; border: 1px solid rgba(240,194,82,.4); background: rgba(240,194,82,.1);
+      color: #f0c252; border-radius: 999px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; flex: 0 0 auto;
+      transition: background 150ms ease; touch-action: manipulation;
+    }
+    .flight-log-map-toggle:hover { background: rgba(240,194,82,.18); }
+    .flight-log-map-toggle.active { background: #f0c252; color: #1a1206; }
+    .flight-log-records { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+    .flight-log-record-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 11px 10px; min-width: 0; }
+    .flight-log-record-card .rlabel { font-size: 9px; color: rgba(235,241,249,.5); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .5px; }
+    .flight-log-record-card .rvalue { font-size: 13px; font-weight: 700; color: var(--deck-ink); line-height: 1.3; overflow-wrap: break-word; }
+    .flight-log-record-card .rsub { font-size: 10px; color: rgba(235,241,249,.55); margin-top: 2px; }
     .flight-log-stat-card { background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 14px 12px; }
     .flight-log-stat-card .num { font-size: 20px; font-weight: 800; line-height: 1; }
     .flight-log-stat-card .num.gold { color: #f0c252; }
@@ -1318,7 +1353,16 @@
     .flight-log-sheet-backdrop { position: fixed; inset: 0; background: rgba(2,4,9,.6); display: none; align-items: flex-end; justify-content: center; z-index: 2200; }
     .flight-log-sheet-backdrop.show { display: flex; }
     .flight-log-sheet { width: 100%; max-width: 560px; background: rgba(8,15,26,.98); border: 1px solid rgba(255,255,255,.14); border-bottom: none; border-radius: 20px 20px 0 0; padding: 18px 20px 26px; }
-    .flight-log-sheet h3 { margin: 0 0 14px; font-size: 15px; }
+    .flight-log-sheet-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .flight-log-sheet h3 { margin: 0; font-size: 15px; }
+    .flight-log-sheet-close {
+      width: 32px; height: 32px; flex: 0 0 auto; border: 0; border-radius: 10px;
+      display: grid; place-items: center;
+      color: var(--deck-muted); background: rgba(255,255,255,.07);
+      cursor: pointer; touch-action: manipulation;
+      transition: transform 160ms cubic-bezier(.22,1,.36,1), background 150ms ease;
+    }
+    .flight-log-sheet-close:hover { color: var(--deck-ink); background: rgba(255,255,255,.12); transform: rotate(3deg) scale(1.04); }
     .flight-log-field-row { display: flex; gap: 10px; margin-bottom: 10px; }
     .flight-log-field { flex: 1; }
     .flight-log-field label { display: block; font-size: 10.5px; color: rgba(235,241,249,.6); margin-bottom: 5px; letter-spacing: .3px; text-transform: uppercase; }
@@ -1439,6 +1483,9 @@
     <div class="card-header">
       <span class="card-iata" id="card-iata"></span>
       <span class="card-city" id="card-city"></span>
+      <button class="info-card-close" type="button" onclick="hideCard()" aria-label="關閉航點資訊">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
     </div>
     <div class="card-rows" id="card-rows"></div>
     <button class="route-popup-log-btn" id="card-log-btn" style="margin-top:12px"></button>
@@ -1498,7 +1545,12 @@
 
   <div class="flight-log-sheet-backdrop" id="add-flight-sheet" onclick="if(event.target===this) closeAddFlightSheet()">
     <div class="flight-log-sheet" onclick="event.stopPropagation()">
-      <h3>新增飛行紀錄</h3>
+      <div class="flight-log-sheet-header">
+        <h3>新增飛行紀錄</h3>
+        <button class="flight-log-sheet-close" type="button" onclick="closeAddFlightSheet()" aria-label="關閉新增飛行紀錄">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
       <div class="flight-log-field-row">
         <div class="flight-log-field"><label>出發 IATA</label><input id="af-dep" placeholder="TSA" maxlength="3"></div>
         <div class="flight-log-field"><label>抵達 IATA</label><input id="af-arr" placeholder="PVG" maxlength="3"></div>
@@ -1533,19 +1585,33 @@
         </button>
       </header>
       <div class="gallery-tabbar">
-        <button class="gallery-tab-btn active" id="gallery-tab-btn-achievement" onclick="switchGalleryTab('achievement')">成就圖鑑</button>
-        <button class="gallery-tab-btn" id="gallery-tab-btn-flight" onclick="switchGalleryTab('flight')">飛行紀錄</button>
+        <button class="gallery-tab-btn active" id="gallery-tab-btn-achievement" onclick="switchGalleryTab('achievement')">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 2h6v3.2c0 2-1.34 3.66-3 3.66S5 7.2 5 5.2V2Z" stroke="currentColor" stroke-width="1.3"/><path d="M5 3.2H2.8c0 2.3.9 3.65 2.85 4.1M11 3.2h2.2c0 2.3-.9 3.65-2.85 4.1M8 8.9v2.25M5.5 14h5M6.1 11.15h3.8V14H6.1v-2.85Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          成就圖鑑
+        </button>
+        <button class="gallery-tab-btn" id="gallery-tab-btn-flight" onclick="switchGalleryTab('flight')">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1.5 8.5l5-1.2 3-5.3 1.5.4-1.7 5 4-1 1.3.9-4.6 2.7-2.3 4.8-1.4-.4.8-3.5-4.6.6-1-1.6 3.8-1.2-3.8-.2z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+          飛行紀錄
+        </button>
       </div>
       <div class="gallery-tab-panel active" id="gallery-tab-achievement">
         <div id="achievement-gallery-grid"></div>
       </div>
       <div class="gallery-tab-panel" id="gallery-tab-flight" style="overflow-y:auto">
         <div style="padding:18px 24px 90px">
+          <div class="flight-log-toolbar">
+            <div class="flight-log-year-filter" id="flight-log-year-filter"></div>
+            <button class="flight-log-map-toggle" id="flight-log-map-toggle" type="button" onclick="toggleMyFlightsOnMap()">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5c-2.5 0-4.5 2-4.5 4.5 0 3.4 4.5 8.5 4.5 8.5s4.5-5.1 4.5-8.5c0-2.5-2-4.5-4.5-4.5Z" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="6" r="1.6" stroke="currentColor" stroke-width="1.1"/></svg>
+              <span id="flight-log-map-toggle-label">在地圖上顯示</span>
+            </button>
+          </div>
           <div class="flight-log-stats">
             <div class="flight-log-stat-card"><div class="num gold" id="fl-stat-km">0</div><div class="label">累積公里數 KM</div></div>
             <div class="flight-log-stat-card"><div class="num teal" id="fl-stat-countries">0</div><div class="label">造訪國家</div></div>
             <div class="flight-log-stat-card"><div class="num" id="fl-stat-count">0</div><div class="label">飛行紀錄</div></div>
           </div>
+          <div class="flight-log-records" id="flight-log-records"></div>
           <div class="flight-log-section-label">紀錄清單</div>
           <div class="flight-log-list" id="flight-log-list"></div>
           <div class="flight-log-empty" id="flight-log-empty" style="display:none">
@@ -2801,8 +2867,9 @@ const ACHIEVEMENT_DEFINITIONS = [
     region: "JAPAN", target: 3, badge: "assets/badges/japan-beginner.png"
   },
   {
-    id: "japanTraveler", title: "日本旅人", code: "JP+", type: "regionAirports",
-    region: "JAPAN", target: 10, badge: "assets/badges/japan-traveler.png"
+    id: "northeastAsiaTraveler", title: "東北亞旅人", code: "NEA", type: "regionGroupAirports",
+    regions: ["JAPAN", "NORTHEAST_ASIA"], target: 10, countryTarget: 2,
+    difficulty: "中級", badge: "assets/badges/japan-traveler.png"
   },
   {
     id: "japanMaster", title: "日本達人", code: "JP★", type: "regionAirports",
@@ -2818,7 +2885,7 @@ const ACHIEVEMENT_DEFINITIONS = [
   },
   {
     id: "rareDestination", title: "冷門航點發掘者", code: "RARE", type: "rareAirports",
-    target: 5, maxAirlines: 2, badge: "assets/badges/rare-destination.png"
+    target: 5, maxAirlines: 1, badge: "assets/badges/rare-destination.png"
   },
   {
     id: "snowTrio", title: "雪國三重奏", code: "SNOW", type: "requiredAirports",
@@ -2846,7 +2913,7 @@ let achievementGalleryReturnFocus = null;
 
 function defaultAchievementState() {
   return {
-    version: 2,
+    version: 3,
     visitedAirports: [],
     visitedAirlines: [],
     achievements: Object.fromEntries(ACHIEVEMENT_DEFINITIONS.map(item => [
@@ -2959,11 +3026,11 @@ async function cloudPullAndMerge() {
 function achievementDescription(definition) {
   const descriptions = {
     japanBeginner: "探索 3 個不同的日本航點。",
-    japanTraveler: "探索 10 個不同的日本航點。",
+    northeastAsiaTraveler: "探索 10 個日本或韓國航點，並涵蓋兩個國家。",
     japanMaster: "探索 20 個不同的日本航點。",
     airlineCollector: "探索 5 家不同航空公司的航線。",
     asiaExplorer: "探索 10 個亞洲航點，並涵蓋至少 4 個國家或地區。",
-    rareDestination: "探索 5 個最多僅有 2 家航司服務的航點。",
+    rareDestination: "探索 5 個在目前航網中僅有 1 家航司服務的航點。",
     snowTrio: "探索札幌新千歲 CTS、青森 AOJ、秋田 AXT。",
     silkRoadTraveler: "探索西安 XIY、塔什干 TAS、伊斯坦堡 IST。",
     europeRomance: "探索巴黎 CDG、維也納 VIE、羅馬 FCO。"
@@ -2972,6 +3039,9 @@ function achievementDescription(definition) {
 }
 
 function achievementGalleryProgressText(definition, progress) {
+  if (definition.type === "regionGroupAirports") {
+    return `${progress.count}/${progress.target} 航點 · ${progress.countryCount}/${progress.countryTarget} 國家`;
+  }
   if (definition.type === "asiaExplorer") {
     return `${progress.count}/${progress.target} 航點 · ${progress.countryCount}/${progress.countryTarget} 地區`;
   }
@@ -2980,7 +3050,7 @@ function achievementGalleryProgressText(definition, progress) {
 }
 
 function achievementGalleryProgressRatio(definition, progress) {
-  if (definition.type === "asiaExplorer") {
+  if (definition.type === "asiaExplorer" || definition.type === "regionGroupAirports") {
     return Math.min(
       progress.count / progress.target,
       progress.countryCount / progress.countryTarget,
@@ -3103,6 +3173,13 @@ function handleAchievementGalleryBackdrop(event) {
 }
 
 window.addEventListener("keydown", event => {
+  if (document.getElementById("add-flight-sheet")?.classList.contains("show")) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeAddFlightSheet();
+    }
+    return;
+  }
   const overlay = document.getElementById("achievement-gallery-overlay");
   if (!overlay?.classList.contains("show")) return;
   if (document.getElementById("auth-overlay")?.classList.contains("show")) {
@@ -3172,6 +3249,20 @@ function achievementProgress(definition, state) {
     const count = airports.filter(iata => AIRPORT_MASTER[iata]?.region === definition.region).length;
     return { complete: count >= definition.target, count, target: definition.target };
   }
+  if (definition.type === "regionGroupAirports") {
+    const regions = new Set(definition.regions || []);
+    const matchingAirports = airports.filter(iata => regions.has(AIRPORT_MASTER[iata]?.region));
+    const countries = new Set(matchingAirports
+      .map(iata => AIRPORT_MASTER[iata]?.country)
+      .filter(Boolean));
+    return {
+      complete: matchingAirports.length >= definition.target && countries.size >= definition.countryTarget,
+      count: matchingAirports.length,
+      target: definition.target,
+      countryCount: countries.size,
+      countryTarget: definition.countryTarget
+    };
+  }
   if (definition.type === "airlines") {
     const count = state.visitedAirlines.length;
     return { complete: count >= definition.target, count, target: definition.target };
@@ -3202,6 +3293,9 @@ function achievementProgress(definition, state) {
 
 function achievementDetail(definition, progress, justUnlocked) {
   if (justUnlocked) return `達成條件，成功解鎖「${definition.title}」徽章！`;
+  if (definition.type === "regionGroupAirports") {
+    return `已探索 ${progress.count}/${progress.target} 個東北亞航點，涵蓋 ${progress.countryCount}/${progress.countryTarget} 個國家。`;
+  }
   if (definition.type === "asiaExplorer") {
     return `已探索 ${progress.count}/${progress.target} 個亞洲航點，涵蓋 ${progress.countryCount}/${progress.countryTarget} 個國家或地區。`;
   }
@@ -3442,10 +3536,16 @@ function haversineKm(a, b) {
   return Math.round(R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1-h)));
 }
 
+let pendingLogButton = null; // 記錄「因未登入而暫時卡住」的記錄按鈕，關閉登入視窗時要還原文字
+
 async function logFlightFromPopup(depIata, arrIata, airlineId, flightNo, btnEl) {
   const btn = btnEl || document.getElementById('route-log-btn');
   if (!currentAuthUser) {
-    if (btn) { btn.textContent = '請先登入才能記錄'; }
+    if (btn) {
+      if (!btn.dataset.defaultText) btn.dataset.defaultText = btn.textContent.trim();
+      btn.textContent = '請先登入才能記錄';
+      pendingLogButton = btn;
+    }
     authFabClick();
     return;
   }
@@ -3493,10 +3593,77 @@ function airportLabel(iata) {
   return window.AIRPORT_MASTER?.[iata]?.city ? `${iata}` : iata;
 }
 
+let flightLogYearFilter = 'all';
+
+function flightLogYears() {
+  const years = new Set();
+  flightLogsCache.forEach(r => { if (r.flight_date) years.add(r.flight_date.slice(0, 4)); });
+  return [...years].sort((a, b) => b.localeCompare(a));
+}
+
+function setFlightLogYearFilter(year) {
+  flightLogYearFilter = year;
+  renderFlightLogPanel();
+}
+
+function renderFlightLogRecords(rows) {
+  const el = document.getElementById('flight-log-records');
+  if (!el) return;
+  if (!rows.length) { el.innerHTML = ''; return; }
+
+  const longest = rows.reduce((max, r) => (r.distance_km || 0) > (max?.distance_km || 0) ? r : max, null);
+
+  const airlineCounts = {};
+  rows.forEach(r => { if (r.airline_id) airlineCounts[r.airline_id] = (airlineCounts[r.airline_id] || 0) + 1; });
+  const topAirlineId = Object.keys(airlineCounts).sort((a, b) => airlineCounts[b] - airlineCounts[a])[0];
+
+  const depCounts = {};
+  rows.forEach(r => { if (r.dep_iata) depCounts[r.dep_iata] = (depCounts[r.dep_iata] || 0) + 1; });
+  const topDep = Object.keys(depCounts).sort((a, b) => depCounts[b] - depCounts[a])[0];
+
+  const cards = [
+    {
+      label: '最長單程',
+      value: longest ? `${longest.dep_iata} → ${longest.arr_iata}` : '—',
+      sub: longest?.distance_km ? `${longest.distance_km.toLocaleString()} km` : '',
+    },
+    {
+      label: '最常搭乘',
+      value: topAirlineId ? (window.AIRLINE_META?.[topAirlineId]?.shortName || topAirlineId) : '—',
+      sub: topAirlineId ? `${airlineCounts[topAirlineId]} 趟` : '',
+    },
+    {
+      label: '最常出發',
+      value: topDep || '—',
+      sub: topDep ? `${depCounts[topDep]} 趟` : '',
+    },
+  ];
+  el.innerHTML = cards.map(c => `
+    <div class="flight-log-record-card">
+      <div class="rlabel">${c.label}</div>
+      <div class="rvalue">${c.value}</div>
+      ${c.sub ? `<div class="rsub">${c.sub}</div>` : ''}
+    </div>
+  `).join('');
+}
+
 function renderFlightLogPanel() {
-  const totalKm = flightLogsCache.reduce((sum, r) => sum + (r.distance_km || 0), 0);
+  const years = flightLogYears();
+  if (flightLogYearFilter !== 'all' && !years.includes(flightLogYearFilter)) flightLogYearFilter = 'all';
+  const yearFilterEl = document.getElementById('flight-log-year-filter');
+  if (yearFilterEl) {
+    yearFilterEl.innerHTML = ['all', ...years].map(y => `
+      <button type="button" class="flight-log-year-chip${flightLogYearFilter === y ? ' active' : ''}" onclick="setFlightLogYearFilter('${y}')">${y === 'all' ? '全部' : y + ' 年'}</button>
+    `).join('');
+  }
+
+  const rows = flightLogYearFilter === 'all'
+    ? flightLogsCache
+    : flightLogsCache.filter(r => (r.flight_date || '').slice(0, 4) === flightLogYearFilter);
+
+  const totalKm = rows.reduce((sum, r) => sum + (r.distance_km || 0), 0);
   const countries = new Set();
-  flightLogsCache.forEach(r => {
+  rows.forEach(r => {
     const c1 = window.AIRPORT_MASTER?.[r.dep_iata]?.country;
     const c2 = window.AIRPORT_MASTER?.[r.arr_iata]?.country;
     if (c1) countries.add(c1);
@@ -3504,17 +3671,22 @@ function renderFlightLogPanel() {
   });
   document.getElementById('fl-stat-km').textContent = totalKm.toLocaleString();
   document.getElementById('fl-stat-countries').textContent = countries.size;
-  document.getElementById('fl-stat-count').textContent = flightLogsCache.length;
+  document.getElementById('fl-stat-count').textContent = rows.length;
+
+  renderFlightLogRecords(rows);
 
   const listEl = document.getElementById('flight-log-list');
   const emptyEl = document.getElementById('flight-log-empty');
-  if (!flightLogsCache.length) {
+  if (!rows.length) {
     listEl.innerHTML = '';
     emptyEl.style.display = 'block';
+    emptyEl.textContent = flightLogsCache.length
+      ? '這個年度還沒有紀錄，換個年份看看。'
+      : '還沒有任何飛行紀錄。在地圖上點機場選「搭乘過」，或按右下角 + 手動新增。';
     return;
   }
   emptyEl.style.display = 'none';
-  listEl.innerHTML = flightLogsCache.map(r => {
+  listEl.innerHTML = rows.map(r => {
     const airlineName = (window.AIRLINE_META?.[r.airline_id]?.shortName) || r.airline_id || '';
     return `
       <div class="flight-stub">
@@ -3548,6 +3720,98 @@ async function deleteFlightLog(id) {
   } catch (error) {
     console.warn('Flight log delete failed.', error);
   }
+}
+
+// ── 我的飛行足跡：把飛行紀錄疊加畫在主地圖上 ──────────────────────────
+let myFlightsLayer = null;
+let myFlightsVisible = false;
+
+function resetMyFlightsMapButton() {
+  const btn = document.getElementById('flight-log-map-toggle');
+  const label = document.getElementById('flight-log-map-toggle-label');
+  btn?.classList.remove('active');
+  if (label) label.textContent = '在地圖上顯示';
+}
+
+function buildMyFlightsLayer(rows) {
+  const segments = new Map();
+  rows.forEach(r => {
+    if (!r.dep_iata || !r.arr_iata) return;
+    const key = [r.dep_iata, r.arr_iata].sort().join('-');
+    if (!segments.has(key)) segments.set(key, { dep: r.dep_iata, arr: r.arr_iata, count: 0 });
+    segments.get(key).count += 1;
+  });
+
+  const layerItems = [];
+  const visitedAirports = new Set();
+  segments.forEach(seg => {
+    const depAirport = window.AIRPORT_MASTER?.[seg.dep];
+    const arrAirport = window.AIRPORT_MASTER?.[seg.arr];
+    if (!depAirport?.coords || !arrAirport?.coords) return;
+    visitedAirports.add(seg.dep);
+    visitedAirports.add(seg.arr);
+    const s = mapCoord(depAirport.coords, seg.dep);
+    const e = mapCoord(arrAirport.coords, seg.arr);
+    layerItems.push(L.polyline(bezierArc(s, e), {
+      color: '#f0c252',
+      weight: Math.min(1.6 + seg.count * 0.6, 5),
+      opacity: 0.82,
+      interactive: false,
+    }));
+  });
+
+  visitedAirports.forEach(iata => {
+    const airport = window.AIRPORT_MASTER?.[iata];
+    if (!airport?.coords) return;
+    const c = mapCoord(airport.coords, iata);
+    layerItems.push(L.circleMarker(c, {
+      radius: 4.5,
+      color: '#f0c252',
+      weight: 1.5,
+      fillColor: '#1a1206',
+      fillOpacity: 0.9,
+      interactive: false,
+    }));
+  });
+
+  return { layerItems, bounds: layerItems.length ? L.featureGroup(layerItems).getBounds() : null };
+}
+
+async function toggleMyFlightsOnMap() {
+  if (!currentAuthUser) { authFabClick(); return; }
+  const btn = document.getElementById('flight-log-map-toggle');
+  const label = document.getElementById('flight-log-map-toggle-label');
+
+  if (myFlightsVisible) {
+    if (myFlightsLayer) { map.removeLayer(myFlightsLayer); myFlightsLayer = null; }
+    myFlightsVisible = false;
+    resetMyFlightsMapButton();
+    return;
+  }
+
+  if (btn) { btn.disabled = true; }
+  if (label) { label.textContent = '讀取中...'; }
+  flightLogsCache = await fetchFlightLogs();
+  if (btn) { btn.disabled = false; }
+
+  if (!flightLogsCache.length) {
+    if (label) { label.textContent = '尚無紀錄可顯示'; }
+    window.setTimeout(resetMyFlightsMapButton, 1800);
+    return;
+  }
+
+  const { layerItems, bounds } = buildMyFlightsLayer(flightLogsCache);
+  if (!layerItems.length) {
+    if (label) { label.textContent = '沒有可定位的航點'; }
+    window.setTimeout(resetMyFlightsMapButton, 1800);
+    return;
+  }
+  myFlightsLayer = L.layerGroup(layerItems).addTo(map);
+  myFlightsVisible = true;
+  btn?.classList.add('active');
+  if (label) { label.textContent = '隱藏我的足跡'; }
+  closeAchievementGallery();
+  if (bounds) map.fitBounds(bounds, { padding: [40, 40] });
 }
 
 function openAddFlightSheet() {
@@ -3608,6 +3872,14 @@ function authClose() {
   const overlay = document.getElementById('auth-overlay');
   overlay.classList.remove('show');
   overlay.setAttribute('aria-hidden', 'true');
+  // 若使用者是因為「未登入」被彈出這個視窗、但取消/關閉時仍未登入，
+  // 把觸發用的按鈕文字（例如「請先登入才能記錄」）還原成原本的文字。
+  if (pendingLogButton && !currentAuthUser) {
+    pendingLogButton.textContent = pendingLogButton.dataset.defaultText || '✓ 搭乘過，加入飛行紀錄';
+    pendingLogButton.disabled = false;
+    pendingLogButton.classList.remove('done');
+  }
+  pendingLogButton = null;
   if (document.getElementById('achievement-gallery-overlay')?.classList.contains('show')) {
     document.getElementById('achievement-gallery-auth-action')?.focus();
   }
@@ -3627,6 +3899,25 @@ async function authLoginWithGoogle() {
 }
 async function authLogout() {
   await supabaseClient.auth.signOut();
+  // 清除本機的成就/飛行紀錄快取，避免同一裝置換帳號登入時，
+  // 上一位使用者殘留在 localStorage 的資料被聯集合併並誤傳到新帳號的雲端。
+  localStorage.removeItem(ACHIEVEMENT_STORAGE_KEY);
+  flightLogsCache = [];
+  flightLogYearFilter = 'all';
+  if (myFlightsVisible && myFlightsLayer) {
+    map.removeLayer(myFlightsLayer);
+    myFlightsLayer = null;
+    myFlightsVisible = false;
+  }
+  resetMyFlightsMapButton();
+  refreshAchievementGalleryButton();
+  if (document.getElementById('achievement-gallery-overlay')?.classList.contains('show')) {
+    if (document.getElementById('gallery-tab-btn-flight')?.classList.contains('active')) {
+      renderFlightLogPanel();
+    } else {
+      renderAchievementGallery();
+    }
+  }
   authClose();
 }
 function updateAuthUI(user) {
