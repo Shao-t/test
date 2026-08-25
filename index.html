@@ -3549,27 +3549,10 @@ async function logFlightFromPopup(depIata, arrIata, airlineId, flightNo, btnEl) 
     authFabClick();
     return;
   }
-  if (btn) { btn.disabled = true; btn.textContent = '記錄中...'; }
-  try {
-    const depCoord = (window.AIRPORT_MASTER?.[depIata]?.coords) || null;
-    const arrCoord = (window.AIRPORT_MASTER?.[arrIata]?.coords) || null;
-    const distanceKm = haversineKm(depCoord, arrCoord);
-    const { error } = await supabaseClient.from('flight_logs').insert({
-      user_id: currentAuthUser.id,
-      dep_iata: depIata,
-      arr_iata: arrIata,
-      airline_id: airlineId || null,
-      flight_no: flightNo || null,
-      distance_km: distanceKm || null
-    });
-    if (error) throw error;
-    if (btn) { btn.textContent = '✓ 已加入飛行紀錄'; btn.classList.add('done'); }
-    flightLogsCache = null; // 強制下次開面板時重新抓
-    trackAirportAchievements({ iata: arrIata }, airlineId); // 同步回頭觸發成就檢查，確保不漏掉
-  } catch (error) {
-    console.warn('Flight log insert failed.', error);
-    if (btn) { btn.disabled = false; btn.textContent = '✓ 搭乘過，加入飛行紀錄'; }
-  }
+  openAddFlightSheet();
+  document.getElementById('af-dep').value = depIata;
+  document.getElementById('af-arr').value = arrIata;
+  document.getElementById('af-flightno').value = flightNo || '';
 }
 
 async function fetchFlightLogs() {
@@ -3890,7 +3873,10 @@ async function authLoginWithGoogle() {
   try {
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.href }
+      options: {
+        redirectTo: window.location.href,
+        queryParams: { prompt: 'select_account' }
+      }
     });
     if (error) throw error;
   } catch (error) {
