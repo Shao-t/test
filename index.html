@@ -1327,6 +1327,7 @@
     .flight-log-list { display: flex; flex-direction: column; gap: 12px; }
     .flight-stub {
       position: relative; background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1);
+      border-left: 3px solid var(--accent, #f0c252);
       border-radius: 18px; display: grid; grid-template-columns: 1fr auto auto auto; align-items: center;
     }
     .flight-stub-main { padding: 14px 12px; min-width: 0; }
@@ -1341,6 +1342,7 @@
     }
     .trip-summary-card {
       background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1); border-radius: 18px;
+      border-left: 3px solid var(--accent, #f0c252);
       display: grid; grid-template-columns: 1fr auto; align-items: center; cursor: pointer;
     }
     .trip-summary-head { padding: 14px 12px; min-width: 0; }
@@ -1656,7 +1658,7 @@
           </div>
           <div class="flight-log-stats">
             <div class="flight-log-stat-card"><div class="num gold" id="fl-stat-km">0</div><div class="label">累積公里數 KM</div></div>
-            <div class="flight-log-stat-card"><div class="num teal" id="fl-stat-countries">0</div><div class="label">造訪國家</div></div>
+            <div class="flight-log-stat-card"><div class="num teal" id="fl-stat-countries">0</div><div class="label">航跡涵蓋國家</div></div>
             <div class="flight-log-stat-card"><div class="num" id="fl-stat-count">0</div><div class="label">飛行紀錄</div></div>
           </div>
           <div class="flight-log-records" id="flight-log-records"></div>
@@ -3761,11 +3763,13 @@ function shortDate(dateStr) {
 
 function renderTripSummaryCard(outbound, inbound) {
   const expanded = expandedTrips.has(outbound.id);
+  const colors = [...new Set([outbound, inbound].map(r => window.AIRLINE_META?.[r.airline_id]?.color).filter(Boolean))];
+  const accentColor = colors[0] || '#f0c252';
   const airlineNames = [...new Set([outbound, inbound].map(r =>
     (window.AIRLINE_META?.[r.airline_id]?.shortName) || r.airline_id).filter(Boolean))].join(' ・ ');
   return `
-    <div class="trip-summary-card">
-      <div class="trip-summary-head" onclick="toggleTripExpand('${outbound.id}')">
+    <div class="trip-summary-card" style="--accent:${accentColor}" onclick="toggleTripExpand('${outbound.id}')">
+      <div class="trip-summary-head">
         <div class="trip-summary-route">
           <span class="flight-stub-iata">${outbound.dep_iata}</span>
           <span class="trip-summary-plane">✈</span>
@@ -3785,8 +3789,9 @@ function renderTripSummaryCard(outbound, inbound) {
 
 function renderFlightStub(r, tripLabel) {
   const airlineName = (window.AIRLINE_META?.[r.airline_id]?.shortName) || r.airline_id || '';
+  const accentColor = window.AIRLINE_META?.[r.airline_id]?.color || '#f0c252';
   return `
-    <div class="flight-stub${tripLabel ? ' flight-stub-paired' : ''}">
+    <div class="flight-stub${tripLabel ? ' flight-stub-paired' : ''}" style="--accent:${accentColor}">
       ${tripLabel ? `<div class="flight-stub-trip-label">${tripLabel}程</div>` : ''}
       <div class="flight-stub-main">
         <div class="flight-stub-route">
@@ -3801,7 +3806,7 @@ function renderFlightStub(r, tripLabel) {
         </div>
         ${r.note ? `<div class="flight-stub-note">${r.note.replace(/</g, '&lt;')}</div>` : ''}
       </div>
-      <div class="flight-stub-tear">${r.flight_no || ''}</div>
+      <div class="flight-stub-tear">${(r.flight_no || '').replace(/</g, '&lt;')}</div>
       <button class="flight-stub-edit" onclick="editFlightLog('${r.id}')" aria-label="編輯紀錄">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2-7.5 7.5-2.6.6.6-2.6 7.5-7.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
       </button>
