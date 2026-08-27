@@ -1345,6 +1345,17 @@
       display: grid; place-items: center; flex: 0 0 auto;
     }
     .flight-stub-del:hover { background: rgba(239,68,68,.18); color: #ff8a8a; }
+    .flight-stub-edit {
+      width: 32px; height: 32px; margin-right: 6px; border: 0; border-radius: 10px;
+      background: rgba(255,255,255,.06); color: rgba(235,241,249,.55); cursor: pointer;
+      display: grid; place-items: center; flex: 0 0 auto;
+    }
+    .flight-stub-edit:hover { background: rgba(240,194,82,.18); color: #f0c252; }
+    .flight-stub-paired { margin-top: -6px; }
+    .flight-stub-trip-label {
+      position: absolute; top: -8px; left: 12px; background: #1a2230; padding: 0 6px;
+      font-size: 9.5px; font-weight: 700; color: rgba(235,241,249,.5); border-radius: 6px;
+    }
     .flight-log-fab {
       position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
       background: #f0c252; color: #1a1206; border: none; font-size: 24px; font-weight: 700;
@@ -1370,6 +1381,7 @@
       width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
       border-radius: 10px; padding: 10px 11px; color: var(--deck-ink); font-size: 13.5px; font-family: inherit;
     }
+    .flight-log-field input:disabled { opacity: .5; cursor: not-allowed; }
     .flight-log-sheet-submit { width: 100%; margin-top: 8px; padding: 13px; border: none; border-radius: 12px; background: #f0c252; color: #1a1206; font-size: 14px; font-weight: 700; cursor: pointer; }
     .flight-log-sheet-msg { min-height: 16px; font-size: 11.5px; margin-top: 8px; text-align: center; }
     .route-popup-log-btn {
@@ -1546,7 +1558,7 @@
   <div class="flight-log-sheet-backdrop" id="add-flight-sheet" onclick="if(event.target===this) closeAddFlightSheet()">
     <div class="flight-log-sheet" onclick="event.stopPropagation()">
       <div class="flight-log-sheet-header">
-        <h3>新增飛行紀錄</h3>
+        <h3 id="af-sheet-title">新增飛行紀錄</h3>
         <button class="flight-log-sheet-close" type="button" onclick="closeAddFlightSheet()" aria-label="關閉新增飛行紀錄">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
         </button>
@@ -1559,7 +1571,7 @@
         <div class="flight-log-field"><label>航班號（選填）</label><input id="af-flightno" placeholder="FM802"></div>
         <div class="flight-log-field"><label>日期</label><input id="af-date" type="date"></div>
       </div>
-      <button class="flight-log-sheet-submit" onclick="submitAddFlightSheet()">儲存紀錄</button>
+      <button class="flight-log-sheet-submit" id="af-submit-btn" onclick="submitAddFlightSheet()">儲存紀錄</button>
       <div class="flight-log-sheet-msg" id="af-msg"></div>
     </div>
   </div>
@@ -3152,6 +3164,7 @@ function switchGalleryTab(tab) {
   document.getElementById("gallery-tab-flight")?.classList.toggle("active", isFlight);
   if (isFlight) {
     if (!currentAuthUser) { authFabClick(); return; }
+    flightLogRouteFilter = null;
     fetchFlightLogs().then(rows => { flightLogsCache = rows; renderFlightLogPanel(); });
   }
 }
@@ -3552,7 +3565,7 @@ async function logFlightFromPopup(depIata, arrIata, airlineId, flightNo, btnEl) 
   openAddFlightSheet();
   document.getElementById('af-dep').value = depIata;
   document.getElementById('af-arr').value = arrIata;
-  document.getElementById('af-flightno').value = flightNo || '';
+  document.getElementById('af-flightno').value = '';
 }
 
 async function fetchFlightLogs() {
@@ -3577,6 +3590,7 @@ function airportLabel(iata) {
 }
 
 let flightLogYearFilter = 'all';
+let flightLogRouteFilter = null; // 從地圖點擊某條航線時，暫存 {dep, arr} 只顯示該航線紀錄
 
 function flightLogYears() {
   const years = new Set();
@@ -3635,14 +3649,26 @@ function renderFlightLogPanel() {
   if (flightLogYearFilter !== 'all' && !years.includes(flightLogYearFilter)) flightLogYearFilter = 'all';
   const yearFilterEl = document.getElementById('flight-log-year-filter');
   if (yearFilterEl) {
-    yearFilterEl.innerHTML = ['all', ...years].map(y => `
-      <button type="button" class="flight-log-year-chip${flightLogYearFilter === y ? ' active' : ''}" onclick="setFlightLogYearFilter('${y}')">${y === 'all' ? '全部' : y + ' 年'}</button>
-    `).join('');
+    if (flightLogRouteFilter) {
+      yearFilterEl.innerHTML = `
+        <button type="button" class="flight-log-year-chip active" onclick="clearFlightLogRouteFilter()">
+          ✕ ${flightLogRouteFilter.dep}⇄${flightLogRouteFilter.arr} 篩選中
+        </button>
+      `;
+    } else {
+      yearFilterEl.innerHTML = ['all', ...years].map(y => `
+        <button type="button" class="flight-log-year-chip${flightLogYearFilter === y ? ' active' : ''}" onclick="setFlightLogYearFilter('${y}')">${y === 'all' ? '全部' : y + ' 年'}</button>
+      `).join('');
+    }
   }
 
-  const rows = flightLogYearFilter === 'all'
-    ? flightLogsCache
-    : flightLogsCache.filter(r => (r.flight_date || '').slice(0, 4) === flightLogYearFilter);
+  const rows = flightLogRouteFilter
+    ? flightLogsCache.filter(r =>
+        (r.dep_iata === flightLogRouteFilter.dep && r.arr_iata === flightLogRouteFilter.arr) ||
+        (r.dep_iata === flightLogRouteFilter.arr && r.arr_iata === flightLogRouteFilter.dep))
+    : (flightLogYearFilter === 'all'
+        ? flightLogsCache
+        : flightLogsCache.filter(r => (r.flight_date || '').slice(0, 4) === flightLogYearFilter));
 
   const totalKm = rows.reduce((sum, r) => sum + (r.distance_km || 0), 0);
   const countries = new Set();
@@ -3669,29 +3695,88 @@ function renderFlightLogPanel() {
     return;
   }
   emptyEl.style.display = 'none';
-  listEl.innerHTML = rows.map(r => {
-    const airlineName = (window.AIRLINE_META?.[r.airline_id]?.shortName) || r.airline_id || '';
-    return `
-      <div class="flight-stub">
-        <div class="flight-stub-main">
-          <div class="flight-stub-route">
-            <span class="flight-stub-iata">${r.dep_iata}</span>
-            <span class="flight-stub-arrow">→</span>
-            <span class="flight-stub-iata">${r.arr_iata}</span>
-          </div>
-          <div class="flight-stub-meta">
-            <span><b>${r.flight_date}</b></span>
-            ${airlineName ? `<span>${airlineName}</span>` : ''}
-            ${r.distance_km ? `<span>${r.distance_km.toLocaleString()} km</span>` : ''}
-          </div>
+  const rendered = new Set();
+  const cards = [];
+  rows.forEach(r => {
+    if (rendered.has(r.id)) return;
+    rendered.add(r.id);
+    const pair = r.paired_log_id ? flightLogsCache.find(x => x.id === r.paired_log_id) : null;
+    if (pair) {
+      rendered.add(pair.id);
+      const [outbound, inbound] = (r.flight_date <= pair.flight_date) ? [r, pair] : [pair, r];
+      cards.push(renderFlightStub(outbound, '去') + renderFlightStub(inbound, '回'));
+    } else {
+      cards.push(renderFlightStub(r));
+    }
+  });
+  listEl.innerHTML = cards.join('');
+}
+
+function renderFlightStub(r, tripLabel) {
+  const airlineName = (window.AIRLINE_META?.[r.airline_id]?.shortName) || r.airline_id || '';
+  return `
+    <div class="flight-stub${tripLabel ? ' flight-stub-paired' : ''}">
+      ${tripLabel ? `<div class="flight-stub-trip-label">${tripLabel}程</div>` : ''}
+      <div class="flight-stub-main">
+        <div class="flight-stub-route">
+          <span class="flight-stub-iata">${r.dep_iata}</span>
+          <span class="flight-stub-arrow">→</span>
+          <span class="flight-stub-iata">${r.arr_iata}</span>
         </div>
-        <div class="flight-stub-tear">${r.flight_no || ''}</div>
-        <button class="flight-stub-del" onclick="deleteFlightLog('${r.id}')" aria-label="刪除紀錄">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.6 9h5.8l.6-9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <div class="flight-stub-meta">
+          <span><b>${r.flight_date}</b></span>
+          ${airlineName ? `<span>${airlineName}</span>` : ''}
+          ${r.distance_km ? `<span>${r.distance_km.toLocaleString()} km</span>` : ''}
+        </div>
       </div>
-    `;
-  }).join('');
+      <div class="flight-stub-tear">${r.flight_no || ''}</div>
+      <button class="flight-stub-edit" onclick="editFlightLog('${r.id}')" aria-label="編輯紀錄">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2-7.5 7.5-2.6.6.6-2.6 7.5-7.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="flight-stub-del" onclick="deleteFlightLog('${r.id}')" aria-label="刪除紀錄">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.6 9h5.8l.6-9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+async function maybePairFlightLog(newRow) {
+  if (!newRow) return;
+  const candidate = flightLogsCache.find(r =>
+    r.id !== newRow.id &&
+    !r.paired_log_id &&
+    r.dep_iata === newRow.arr_iata &&
+    r.arr_iata === newRow.dep_iata &&
+    Math.abs(new Date(r.flight_date) - new Date(newRow.flight_date)) <= 30 * 86400000
+  );
+  if (!candidate) return;
+  const ok = window.confirm(`偵測到 ${candidate.dep_iata}→${candidate.arr_iata}（${candidate.flight_date}）\n是否為這趟的去程/回程，要合併顯示嗎？`);
+  if (!ok) return;
+  try {
+    const { error } = await supabaseClient.from('flight_logs')
+      .update({ paired_log_id: candidate.id })
+      .eq('id', newRow.id);
+    if (error) throw error;
+    const { error: error2 } = await supabaseClient.from('flight_logs')
+      .update({ paired_log_id: newRow.id })
+      .eq('id', candidate.id);
+    if (error2) throw error2;
+    flightLogsCache = await fetchFlightLogs();
+    renderFlightLogPanel();
+  } catch (error) {
+    console.warn('Pair flight log failed.', error);
+  }
+}
+
+function clearFlightLogRouteFilter() {
+  flightLogRouteFilter = null;
+  renderFlightLogPanel();
+}
+
+function openFlightLogPanelForRoute(dep, arr) {
+  openAchievementGallery();
+  switchGalleryTab('flight');
+  flightLogRouteFilter = { dep, arr };
 }
 
 async function deleteFlightLog(id) {
@@ -3739,8 +3824,9 @@ function buildMyFlightsLayer(rows) {
       color: '#f0c252',
       weight: Math.min(1.6 + seg.count * 0.6, 5),
       opacity: 0.82,
-      interactive: false,
-    }));
+      interactive: true,
+    }).bindTooltip(`${seg.dep} ⇄ ${seg.arr}　共 ${seg.count} 次搭乘`, { sticky: true })
+      .on('click', () => openFlightLogPanelForRoute(seg.dep, seg.arr)));
   });
 
   visitedAirports.forEach(iata => {
@@ -3797,15 +3883,64 @@ async function toggleMyFlightsOnMap() {
   if (bounds) map.fitBounds(bounds, { padding: [40, 40] });
 }
 
+let editingFlightLogId = null; // 若非 null，表單為「編輯模式」，只允許改航班號與日期
+
 function openAddFlightSheet() {
+  editingFlightLogId = null;
+  document.getElementById('af-sheet-title').textContent = '新增飛行紀錄';
+  document.getElementById('af-submit-btn').textContent = '儲存紀錄';
+  document.getElementById('af-dep').disabled = false;
+  document.getElementById('af-arr').disabled = false;
+  document.getElementById('af-dep').value = '';
+  document.getElementById('af-arr').value = '';
+  document.getElementById('af-flightno').value = '';
   document.getElementById('af-msg').textContent = '';
   document.getElementById('af-date').value = new Date().toISOString().slice(0, 10);
   document.getElementById('add-flight-sheet').classList.add('show');
 }
+
+function editFlightLog(id) {
+  const row = flightLogsCache.find(r => r.id === id);
+  if (!row) return;
+  editingFlightLogId = id;
+  document.getElementById('af-sheet-title').textContent = '編輯飛行紀錄';
+  document.getElementById('af-submit-btn').textContent = '更新紀錄';
+  document.getElementById('af-dep').value = row.dep_iata;
+  document.getElementById('af-arr').value = row.arr_iata;
+  document.getElementById('af-dep').disabled = true;
+  document.getElementById('af-arr').disabled = true;
+  document.getElementById('af-flightno').value = row.flight_no || '';
+  document.getElementById('af-date').value = row.flight_date || '';
+  document.getElementById('af-msg').textContent = '';
+  document.getElementById('add-flight-sheet').classList.add('show');
+}
+
 function closeAddFlightSheet() {
+  editingFlightLogId = null;
+  document.getElementById('af-dep').disabled = false;
+  document.getElementById('af-arr').disabled = false;
   document.getElementById('add-flight-sheet').classList.remove('show');
 }
 async function submitAddFlightSheet() {
+  if (editingFlightLogId) {
+    const flightNo = document.getElementById('af-flightno').value.trim();
+    const date = document.getElementById('af-date').value;
+    const msgEl = document.getElementById('af-msg');
+    if (!date) { msgEl.textContent = '請選擇日期'; msgEl.style.color = '#ef4444'; return; }
+    msgEl.textContent = '更新中...'; msgEl.style.color = 'rgba(235,241,249,.6)';
+    try {
+      const { error } = await supabaseClient.from('flight_logs')
+        .update({ flight_no: flightNo || null, flight_date: date })
+        .eq('id', editingFlightLogId);
+      if (error) throw error;
+      closeAddFlightSheet();
+      flightLogsCache = await fetchFlightLogs();
+      renderFlightLogPanel();
+    } catch (error) {
+      msgEl.textContent = '更新失敗，請稍後再試'; msgEl.style.color = '#ef4444';
+    }
+    return;
+  }
   const dep = document.getElementById('af-dep').value.trim().toUpperCase();
   const arr = document.getElementById('af-arr').value.trim().toUpperCase();
   const flightNo = document.getElementById('af-flightno').value.trim();
@@ -3820,19 +3955,20 @@ async function submitAddFlightSheet() {
   msgEl.textContent = '儲存中...'; msgEl.style.color = 'rgba(235,241,249,.6)';
   try {
     const distanceKm = haversineKm(window.AIRPORT_MASTER[dep].coords, window.AIRPORT_MASTER[arr].coords);
-    const { error } = await supabaseClient.from('flight_logs').insert({
+    const { data: inserted, error } = await supabaseClient.from('flight_logs').insert({
       user_id: currentAuthUser.id,
       dep_iata: dep,
       arr_iata: arr,
       flight_no: flightNo || null,
       flight_date: date || new Date().toISOString().slice(0, 10),
       distance_km: distanceKm || null
-    });
+    }).select().single();
     if (error) throw error;
     closeAddFlightSheet();
     flightLogsCache = await fetchFlightLogs();
     renderFlightLogPanel();
     trackAirportAchievements({ iata: arr }, null); // 手動新增紀錄同樣同步觸發成就檢查
+    await maybePairFlightLog(inserted);
   } catch (error) {
     msgEl.textContent = '儲存失敗，請稍後再試'; msgEl.style.color = '#ef4444';
   }
