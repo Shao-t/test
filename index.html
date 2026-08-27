@@ -1327,7 +1327,7 @@
     .flight-log-list { display: flex; flex-direction: column; gap: 12px; }
     .flight-stub {
       position: relative; background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1);
-      border-radius: 18px; display: grid; grid-template-columns: 1fr auto auto; align-items: center;
+      border-radius: 18px; display: grid; grid-template-columns: 1fr auto auto auto; align-items: center;
     }
     .flight-stub-main { padding: 14px 12px; min-width: 0; }
     .flight-stub-route { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
@@ -1335,6 +1335,25 @@
     .flight-stub-arrow { color: rgba(235,241,249,.4); font-size: 12px; }
     .flight-stub-meta { display: flex; gap: 12px; font-size: 10.5px; color: rgba(235,241,249,.6); flex-wrap: wrap; }
     .flight-stub-meta b { color: var(--deck-ink); font-weight: 600; }
+    .flight-stub-note {
+      margin-top: 6px; font-size: 11px; color: rgba(235,241,249,.55);
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .trip-summary-card {
+      background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1); border-radius: 18px;
+      display: grid; grid-template-columns: 1fr auto; align-items: center; cursor: pointer;
+    }
+    .trip-summary-head { padding: 14px 12px; min-width: 0; }
+    .trip-summary-route { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .trip-summary-plane { color: #f0c252; font-size: 13px; }
+    .trip-summary-dates { font-size: 11px; color: rgba(235,241,249,.6); }
+    .trip-summary-airlines { font-size: 10.5px; color: rgba(235,241,249,.45); margin-top: 3px; }
+    .trip-summary-tear {
+      padding: 0 14px; height: 100%; border-left: 1px dashed rgba(255,255,255,.18);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      font-size: 10px; font-weight: 700; color: #f0c252; text-align: center; white-space: nowrap;
+    }
+    .trip-summary-chevron { color: rgba(235,241,249,.4); font-size: 11px; }
     .flight-stub-tear {
       padding: 0 12px; border-left: 1px dashed rgba(255,255,255,.18);
       font-size: 10px; font-weight: 800; color: #f0c252; text-align: center; white-space: nowrap;
@@ -1351,7 +1370,6 @@
       display: grid; place-items: center; flex: 0 0 auto;
     }
     .flight-stub-edit:hover { background: rgba(240,194,82,.18); color: #f0c252; }
-    .flight-stub-paired { margin-top: -6px; }
     .flight-stub-trip-label {
       position: absolute; top: -8px; left: 12px; background: #1a2230; padding: 0 6px;
       font-size: 9.5px; font-weight: 700; color: rgba(235,241,249,.5); border-radius: 6px;
@@ -1382,6 +1400,17 @@
       border-radius: 10px; padding: 10px 11px; color: var(--deck-ink); font-size: 13.5px; font-family: inherit;
     }
     .flight-log-field input:disabled { opacity: .5; cursor: not-allowed; }
+    .flight-log-field textarea {
+      width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+      border-radius: 10px; padding: 10px 11px; color: var(--deck-ink); font-size: 13px; font-family: inherit;
+      resize: vertical; min-height: 40px;
+    }
+    .flight-log-swap-btn {
+      width: 32px; height: 32px; margin-top: 20px; border: 1px solid rgba(255,255,255,.14); border-radius: 10px;
+      background: rgba(255,255,255,.06); color: rgba(235,241,249,.7); cursor: pointer;
+      display: grid; place-items: center; flex: 0 0 auto;
+    }
+    .flight-log-swap-btn:hover { background: rgba(240,194,82,.16); color: #f0c252; }
     .flight-log-sheet-submit { width: 100%; margin-top: 8px; padding: 13px; border: none; border-radius: 12px; background: #f0c252; color: #1a1206; font-size: 14px; font-weight: 700; cursor: pointer; }
     .flight-log-sheet-msg { min-height: 16px; font-size: 11.5px; margin-top: 8px; text-align: center; }
     .route-popup-log-btn {
@@ -1565,11 +1594,18 @@
       </div>
       <div class="flight-log-field-row">
         <div class="flight-log-field"><label>出發 IATA</label><input id="af-dep" placeholder="TSA" maxlength="3"></div>
+        <button class="flight-log-swap-btn" type="button" id="af-swap-btn" onclick="swapAddFlightDirection()" aria-label="對調出發與抵達">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 5.5h9M9.5 2.5l2.5 3-2.5 3M13 10.5H4M6.5 7.5l-2.5 3 2.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
         <div class="flight-log-field"><label>抵達 IATA</label><input id="af-arr" placeholder="PVG" maxlength="3"></div>
       </div>
       <div class="flight-log-field-row">
         <div class="flight-log-field"><label>航班號（選填）</label><input id="af-flightno" placeholder="FM802"></div>
         <div class="flight-log-field"><label>日期</label><input id="af-date" type="date"></div>
+      </div>
+      <div class="flight-log-field">
+        <label>備註（選填）</label>
+        <textarea id="af-note" rows="2" placeholder="例如：轉機、延誤、特別事項..."></textarea>
       </div>
       <button class="flight-log-sheet-submit" id="af-submit-btn" onclick="submitAddFlightSheet()">儲存紀錄</button>
       <div class="flight-log-sheet-msg" id="af-msg"></div>
@@ -3704,12 +3740,47 @@ function renderFlightLogPanel() {
     if (pair) {
       rendered.add(pair.id);
       const [outbound, inbound] = (r.flight_date <= pair.flight_date) ? [r, pair] : [pair, r];
-      cards.push(renderFlightStub(outbound, '去') + renderFlightStub(inbound, '回'));
+      cards.push(renderTripSummaryCard(outbound, inbound));
     } else {
       cards.push(renderFlightStub(r));
     }
   });
   listEl.innerHTML = cards.join('');
+}
+
+let expandedTrips = new Set(); // 展開中的去回程摘要卡（用去程 id 當 key）
+
+function toggleTripExpand(id) {
+  if (expandedTrips.has(id)) expandedTrips.delete(id); else expandedTrips.add(id);
+  renderFlightLogPanel();
+}
+
+function shortDate(dateStr) {
+  return dateStr ? dateStr.slice(5).replace('-', '/') : '';
+}
+
+function renderTripSummaryCard(outbound, inbound) {
+  const expanded = expandedTrips.has(outbound.id);
+  const airlineNames = [...new Set([outbound, inbound].map(r =>
+    (window.AIRLINE_META?.[r.airline_id]?.shortName) || r.airline_id).filter(Boolean))].join(' ・ ');
+  return `
+    <div class="trip-summary-card">
+      <div class="trip-summary-head" onclick="toggleTripExpand('${outbound.id}')">
+        <div class="trip-summary-route">
+          <span class="flight-stub-iata">${outbound.dep_iata}</span>
+          <span class="trip-summary-plane">✈</span>
+          <span class="flight-stub-iata">${outbound.arr_iata}</span>
+        </div>
+        <div class="trip-summary-dates">${shortDate(outbound.flight_date)} → ${shortDate(inbound.flight_date)}</div>
+        ${airlineNames ? `<div class="trip-summary-airlines">${airlineNames}</div>` : ''}
+      </div>
+      <div class="trip-summary-tear">
+        <span>去回 2 段</span>
+        <span class="trip-summary-chevron">${expanded ? '︿' : '﹀'}</span>
+      </div>
+    </div>
+    ${expanded ? renderFlightStub(outbound, '去') + renderFlightStub(inbound, '回') : ''}
+  `;
 }
 
 function renderFlightStub(r, tripLabel) {
@@ -3728,6 +3799,7 @@ function renderFlightStub(r, tripLabel) {
           ${airlineName ? `<span>${airlineName}</span>` : ''}
           ${r.distance_km ? `<span>${r.distance_km.toLocaleString()} km</span>` : ''}
         </div>
+        ${r.note ? `<div class="flight-stub-note">${r.note.replace(/</g, '&lt;')}</div>` : ''}
       </div>
       <div class="flight-stub-tear">${r.flight_no || ''}</div>
       <button class="flight-stub-edit" onclick="editFlightLog('${r.id}')" aria-label="編輯紀錄">
@@ -3885,6 +3957,15 @@ async function toggleMyFlightsOnMap() {
 
 let editingFlightLogId = null; // 若非 null，表單為「編輯模式」，只允許改航班號與日期
 
+function swapAddFlightDirection() {
+  const depEl = document.getElementById('af-dep');
+  const arrEl = document.getElementById('af-arr');
+  if (depEl.disabled) return; // 編輯模式下機場欄位鎖定，不可對調
+  const tmp = depEl.value;
+  depEl.value = arrEl.value;
+  arrEl.value = tmp;
+}
+
 function openAddFlightSheet() {
   editingFlightLogId = null;
   document.getElementById('af-sheet-title').textContent = '新增飛行紀錄';
@@ -3894,6 +3975,7 @@ function openAddFlightSheet() {
   document.getElementById('af-dep').value = '';
   document.getElementById('af-arr').value = '';
   document.getElementById('af-flightno').value = '';
+  document.getElementById('af-note').value = '';
   document.getElementById('af-msg').textContent = '';
   document.getElementById('af-date').value = new Date().toISOString().slice(0, 10);
   document.getElementById('add-flight-sheet').classList.add('show');
@@ -3911,6 +3993,7 @@ function editFlightLog(id) {
   document.getElementById('af-arr').disabled = true;
   document.getElementById('af-flightno').value = row.flight_no || '';
   document.getElementById('af-date').value = row.flight_date || '';
+  document.getElementById('af-note').value = row.note || '';
   document.getElementById('af-msg').textContent = '';
   document.getElementById('add-flight-sheet').classList.add('show');
 }
@@ -3925,12 +4008,13 @@ async function submitAddFlightSheet() {
   if (editingFlightLogId) {
     const flightNo = document.getElementById('af-flightno').value.trim();
     const date = document.getElementById('af-date').value;
+    const note = document.getElementById('af-note').value.trim();
     const msgEl = document.getElementById('af-msg');
     if (!date) { msgEl.textContent = '請選擇日期'; msgEl.style.color = '#ef4444'; return; }
     msgEl.textContent = '更新中...'; msgEl.style.color = 'rgba(235,241,249,.6)';
     try {
       const { error } = await supabaseClient.from('flight_logs')
-        .update({ flight_no: flightNo || null, flight_date: date })
+        .update({ flight_no: flightNo || null, flight_date: date, note: note || null })
         .eq('id', editingFlightLogId);
       if (error) throw error;
       closeAddFlightSheet();
@@ -3945,6 +4029,7 @@ async function submitAddFlightSheet() {
   const arr = document.getElementById('af-arr').value.trim().toUpperCase();
   const flightNo = document.getElementById('af-flightno').value.trim();
   const date = document.getElementById('af-date').value;
+  const note = document.getElementById('af-note').value.trim();
   const msgEl = document.getElementById('af-msg');
   if (!dep || !arr || dep.length !== 3 || arr.length !== 3) {
     msgEl.textContent = '請輸入正確的三碼機場代碼'; msgEl.style.color = '#ef4444'; return;
@@ -3961,7 +4046,8 @@ async function submitAddFlightSheet() {
       arr_iata: arr,
       flight_no: flightNo || null,
       flight_date: date || new Date().toISOString().slice(0, 10),
-      distance_km: distanceKm || null
+      distance_km: distanceKm || null,
+      note: note || null
     }).select().single();
     if (error) throw error;
     closeAddFlightSheet();
