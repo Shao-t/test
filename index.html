@@ -1296,7 +1296,7 @@
     #auth-status-dot.logged-in { background: #7cc68c; }
 
     /* ---- Flight Log (now a tab inside achievement gallery) ---- */
-    .flight-log-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+    .flight-log-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
     .flight-log-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
     .flight-log-year-filter { display: flex; gap: 6px; flex-wrap: wrap; }
     .flight-log-year-chip {
@@ -1324,58 +1324,66 @@
     .flight-log-stat-card .label { font-size: 10px; color: rgba(235,241,249,.62); margin-top: 6px; }
     .flight-log-section-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(235,241,249,.62); margin: 0 0 10px 2px; font-weight: 600; }
     .flight-log-empty { text-align: center; color: rgba(235,241,249,.5); font-size: 12.5px; padding: 30px 10px; }
-    .flight-log-list { display: flex; flex-direction: column; gap: 12px; }
-    .flight-stub {
+    .flight-log-list { display: flex; flex-direction: column; }
+    .timeline-group { display: flex; align-items: stretch; gap: 12px; }
+    .timeline-rail { display: flex; flex-direction: column; align-items: center; width: 42px; flex: 0 0 auto; }
+    .timeline-date { text-align: center; }
+    .timeline-md { font-size: 14px; font-weight: 800; color: rgba(235,241,249,.7); line-height: 1.2; }
+    .timeline-md.latest { color: #f0c252; }
+    .timeline-weekday { font-size: 9px; color: rgba(235,241,249,.4); margin-top: 1px; }
+    .timeline-node { width: 8px; height: 8px; border-radius: 50%; background: rgba(235,241,249,.3); margin: 7px 0 4px; flex: 0 0 auto; }
+    .timeline-node.latest { width: 12px; height: 12px; background: #f0c252; box-shadow: 0 0 0 4px rgba(240,194,82,.2); }
+    .timeline-line { width: 2px; flex: 1; background: rgba(255,255,255,.12); min-height: 8px; }
+    .timeline-cards { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding-bottom: 14px; }
+    .flight-log-more-btn {
+      width: 100%; margin-top: 4px; padding: 11px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05); color: rgba(235,241,249,.65); font-size: 12.5px; cursor: pointer;
+    }
+    .flight-log-more-btn:hover { background: rgba(255,255,255,.09); }
+    .ticket-card {
       position: relative; background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1);
-      border-left: 3px solid var(--accent, #f0c252);
-      border-radius: 18px; display: grid; grid-template-columns: 1fr auto auto auto; align-items: center;
+      border-radius: 18px; padding: 14px 16px 12px;
     }
-    .flight-stub-main { padding: 14px 12px; min-width: 0; }
-    .flight-stub-route { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .flight-stub-iata { font-size: 18px; font-weight: 800; }
-    .flight-stub-arrow { color: rgba(235,241,249,.4); font-size: 12px; }
-    .flight-stub-meta { display: flex; gap: 12px; font-size: 10.5px; color: rgba(235,241,249,.6); flex-wrap: wrap; }
-    .flight-stub-meta b { color: var(--deck-ink); font-weight: 600; }
-    .flight-stub-note {
-      margin-top: 6px; font-size: 11px; color: rgba(235,241,249,.55);
-      white-space: pre-wrap; word-break: break-word;
+    .ticket-badge {
+      display: inline-block; background: rgba(240,194,82,.16); color: #f0c252;
+      font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 7px; margin-bottom: 8px;
     }
-    .trip-summary-card {
-      background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1); border-radius: 18px;
-      border-left: 3px solid var(--accent, #f0c252);
-      display: grid; grid-template-columns: 1fr auto; align-items: center; cursor: pointer;
+    .ticket-daterange { display: inline-block; margin-left: 8px; font-size: 11.5px; color: rgba(235,241,249,.6); }
+    .ticket-route { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
+    .ticket-endpoint { min-width: 0; }
+    .ticket-iata { font-size: 24px; font-weight: 800; line-height: 1.1; }
+    .ticket-city { font-size: 11px; color: rgba(235,241,249,.55); margin-top: 2px; }
+    .ticket-line {
+      flex: 1; min-width: 20px; border-top: 2px dashed rgba(240,194,82,.55);
+      display: flex; align-items: center; justify-content: center; position: relative; top: -8px;
     }
-    .trip-summary-head { padding: 14px 12px; min-width: 0; }
-    .trip-summary-route { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .trip-summary-plane { color: #f0c252; font-size: 13px; }
-    .trip-summary-dates { font-size: 11px; color: rgba(235,241,249,.6); }
-    .trip-summary-airlines { font-size: 10.5px; color: rgba(235,241,249,.45); margin-top: 3px; }
-    .trip-summary-tear {
-      padding: 0 14px; height: 100%; border-left: 1px dashed rgba(255,255,255,.18);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-      font-size: 10px; font-weight: 700; color: #f0c252; text-align: center; white-space: nowrap;
+    .ticket-plane { background: #1a2230; padding: 0 6px; color: #f0c252; font-size: 15px; }
+    .ticket-divider { border-top: 1px dashed rgba(255,255,255,.16); margin: 8px 0; }
+    .ticket-leg-row {
+      display: flex; align-items: baseline; gap: 10px; font-size: 12.5px; padding: 4px 0;
     }
-    .trip-summary-chevron { color: rgba(235,241,249,.4); font-size: 11px; }
-    .flight-stub-tear {
-      padding: 0 12px; border-left: 1px dashed rgba(255,255,255,.18);
-      font-size: 10px; font-weight: 800; color: #f0c252; text-align: center; white-space: nowrap;
-    }
-    .flight-stub-del {
-      width: 32px; height: 32px; margin-right: 8px; border: 0; border-radius: 10px;
+    .ticket-leg-label { color: rgba(235,241,249,.5); flex: 0 0 32px; }
+    .ticket-leg-date { color: var(--deck-ink); font-weight: 600; flex: 0 0 auto; }
+    .ticket-leg-route { flex: 1; color: var(--deck-ink); }
+    .ticket-leg-km { color: #f0c252; font-weight: 600; font-size: 11.5px; }
+    .ticket-edit-btn {
+      position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border: 0; border-radius: 9px;
       background: rgba(255,255,255,.06); color: rgba(235,241,249,.55); cursor: pointer;
-      display: grid; place-items: center; flex: 0 0 auto;
+      display: grid; place-items: center;
     }
-    .flight-stub-del:hover { background: rgba(239,68,68,.18); color: #ff8a8a; }
-    .flight-stub-edit {
-      width: 32px; height: 32px; margin-right: 6px; border: 0; border-radius: 10px;
-      background: rgba(255,255,255,.06); color: rgba(235,241,249,.55); cursor: pointer;
-      display: grid; place-items: center; flex: 0 0 auto;
+    .ticket-edit-btn:hover { background: rgba(240,194,82,.18); color: #f0c252; }
+    .ticket-edit-menu {
+      display: none; position: absolute; top: 46px; right: 12px; z-index: 5;
+      background: #1e2734; border: 1px solid rgba(255,255,255,.14); border-radius: 12px;
+      overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.4);
     }
-    .flight-stub-edit:hover { background: rgba(240,194,82,.18); color: #f0c252; }
-    .flight-stub-trip-label {
-      position: absolute; top: -8px; left: 12px; background: #1a2230; padding: 0 6px;
-      font-size: 9.5px; font-weight: 700; color: rgba(235,241,249,.5); border-radius: 6px;
+    .ticket-edit-menu.show { display: block; }
+    .ticket-edit-menu button {
+      display: block; width: 100%; padding: 10px 16px; background: none; border: 0;
+      color: var(--deck-ink); font-size: 12.5px; text-align: left; cursor: pointer; white-space: nowrap;
     }
+    .ticket-edit-menu button:hover { background: rgba(240,194,82,.12); }
+    .ticket-edit-menu button + button { border-top: 1px solid rgba(255,255,255,.08); }
     .flight-log-fab {
       position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
       background: #f0c252; color: #1a1206; border: none; font-size: 24px; font-weight: 700;
@@ -1414,6 +1422,11 @@
     }
     .flight-log-swap-btn:hover { background: rgba(240,194,82,.16); color: #f0c252; }
     .flight-log-sheet-submit { width: 100%; margin-top: 8px; padding: 13px; border: none; border-radius: 12px; background: #f0c252; color: #1a1206; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .flight-log-sheet-delete {
+      width: 100%; margin-top: 8px; padding: 10px; border: none; background: none;
+      color: rgba(255,138,138,.85); font-size: 12.5px; cursor: pointer; text-align: center;
+    }
+    .flight-log-sheet-delete:hover { color: #ff8a8a; }
     .flight-log-sheet-msg { min-height: 16px; font-size: 11.5px; margin-top: 8px; text-align: center; }
     .route-popup-log-btn {
       margin-top: 10px; width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(240,194,82,.35);
@@ -1610,6 +1623,7 @@
         <textarea id="af-note" rows="2" placeholder="例如：轉機、延誤、特別事項..."></textarea>
       </div>
       <button class="flight-log-sheet-submit" id="af-submit-btn" onclick="submitAddFlightSheet()">儲存紀錄</button>
+      <button class="flight-log-sheet-delete" id="af-delete-btn" type="button" onclick="deleteFlightLogFromSheet()" style="display:none">刪除這筆紀錄</button>
       <div class="flight-log-sheet-msg" id="af-msg"></div>
     </div>
   </div>
@@ -1660,10 +1674,12 @@
             <div class="flight-log-stat-card"><div class="num gold" id="fl-stat-km">0</div><div class="label">累積公里數 KM</div></div>
             <div class="flight-log-stat-card"><div class="num teal" id="fl-stat-countries">0</div><div class="label">航跡涵蓋國家</div></div>
             <div class="flight-log-stat-card"><div class="num" id="fl-stat-count">0</div><div class="label">飛行紀錄</div></div>
+            <div class="flight-log-stat-card"><div class="num gold" id="fl-stat-days">0</div><div class="label">總天數</div></div>
           </div>
           <div class="flight-log-records" id="flight-log-records"></div>
           <div class="flight-log-section-label">紀錄清單</div>
           <div class="flight-log-list" id="flight-log-list"></div>
+          <button class="flight-log-more-btn" id="flight-log-more-btn" type="button" onclick="loadMoreFlightLogGroups()" style="display:none">更早的記錄 ﹀</button>
           <div class="flight-log-empty" id="flight-log-empty" style="display:none">
             還沒有任何飛行紀錄。在地圖上點機場選「搭乘過」，或按右下角 + 手動新增。
           </div>
@@ -3203,6 +3219,7 @@ function switchGalleryTab(tab) {
   if (isFlight) {
     if (!currentAuthUser) { authFabClick(); return; }
     flightLogRouteFilter = null;
+    flightLogVisibleGroups = 5;
     fetchFlightLogs().then(rows => { flightLogsCache = rows; renderFlightLogPanel(); });
   }
 }
@@ -3638,6 +3655,7 @@ function flightLogYears() {
 
 function setFlightLogYearFilter(year) {
   flightLogYearFilter = year;
+  flightLogVisibleGroups = 5;
   renderFlightLogPanel();
 }
 
@@ -3708,6 +3726,22 @@ function renderFlightLogPanel() {
         ? flightLogsCache
         : flightLogsCache.filter(r => (r.flight_date || '').slice(0, 4) === flightLogYearFilter));
 
+  const rendered = new Set();
+  const trips = []; // 先把 rows 配對成「行程」清單（去回程合併、單程各自一筆），共用於統計與渲染
+  rows.forEach(r => {
+    if (rendered.has(r.id)) return;
+    rendered.add(r.id);
+    const pair = r.paired_log_id ? flightLogsCache.find(x => x.id === r.paired_log_id) : null;
+    if (pair) {
+      rendered.add(pair.id);
+      const [outbound, inbound] = (r.flight_date <= pair.flight_date) ? [r, pair] : [pair, r];
+      trips.push({ anchorDate: outbound.flight_date, outbound, inbound });
+    } else {
+      trips.push({ anchorDate: r.flight_date, outbound: r, inbound: null });
+    }
+  });
+  trips.sort((a, b) => b.anchorDate.localeCompare(a.anchorDate));
+
   const totalKm = rows.reduce((sum, r) => sum + (r.distance_km || 0), 0);
   const countries = new Set();
   rows.forEach(r => {
@@ -3716,16 +3750,24 @@ function renderFlightLogPanel() {
     if (c1) countries.add(c1);
     if (c2) countries.add(c2);
   });
+  const totalDays = trips.reduce((sum, t) => {
+    if (!t.inbound) return sum + 1;
+    const span = Math.round((new Date(t.inbound.flight_date) - new Date(t.outbound.flight_date)) / 86400000) + 1;
+    return sum + Math.max(span, 1);
+  }, 0);
   document.getElementById('fl-stat-km').textContent = totalKm.toLocaleString();
   document.getElementById('fl-stat-countries').textContent = countries.size;
   document.getElementById('fl-stat-count').textContent = rows.length;
+  document.getElementById('fl-stat-days').textContent = totalDays;
 
   renderFlightLogRecords(rows);
 
   const listEl = document.getElementById('flight-log-list');
   const emptyEl = document.getElementById('flight-log-empty');
+  const moreBtn = document.getElementById('flight-log-more-btn');
   if (!rows.length) {
     listEl.innerHTML = '';
+    if (moreBtn) moreBtn.style.display = 'none';
     emptyEl.style.display = 'block';
     emptyEl.textContent = flightLogsCache.length
       ? '這個年度還沒有紀錄，換個年份看看。'
@@ -3733,86 +3775,116 @@ function renderFlightLogPanel() {
     return;
   }
   emptyEl.style.display = 'none';
-  const rendered = new Set();
-  const cards = [];
-  rows.forEach(r => {
-    if (rendered.has(r.id)) return;
-    rendered.add(r.id);
-    const pair = r.paired_log_id ? flightLogsCache.find(x => x.id === r.paired_log_id) : null;
-    if (pair) {
-      rendered.add(pair.id);
-      const [outbound, inbound] = (r.flight_date <= pair.flight_date) ? [r, pair] : [pair, r];
-      cards.push(renderTripSummaryCard(outbound, inbound));
-    } else {
-      cards.push(renderFlightStub(r));
-    }
+
+  const groups = [];
+  trips.forEach(t => {
+    const last = groups[groups.length - 1];
+    if (last && last.date === t.anchorDate) last.trips.push(t);
+    else groups.push({ date: t.anchorDate, trips: [t] });
   });
-  listEl.innerHTML = cards.join('');
+
+  const visibleGroups = groups.slice(0, flightLogVisibleGroups);
+  listEl.innerHTML = visibleGroups.map((g, i) => renderTimelineGroup(g, i === 0)).join('');
+  if (moreBtn) moreBtn.style.display = groups.length > visibleGroups.length ? 'block' : 'none';
 }
 
-let expandedTrips = new Set(); // 展開中的去回程摘要卡（用去程 id 當 key）
+let flightLogVisibleGroups = 5; // 分頁：一次顯示幾個日期時間軸節點，點「更早的記錄」才載入更多
 
-function toggleTripExpand(id) {
-  if (expandedTrips.has(id)) expandedTrips.delete(id); else expandedTrips.add(id);
+function loadMoreFlightLogGroups() {
+  flightLogVisibleGroups += 5;
   renderFlightLogPanel();
+}
+
+function renderTimelineGroup(g, isLatest) {
+  const d = new Date(g.date + 'T00:00:00');
+  const md = `${d.getMonth() + 1}/${d.getDate()}`;
+  const weekday = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'][d.getDay()];
+  const cardsHtml = g.trips.map(t => renderTicketCard(t.outbound, t.inbound)).join('');
+  return `
+    <div class="timeline-group">
+      <div class="timeline-rail">
+        <div class="timeline-date">
+          <div class="timeline-md${isLatest ? ' latest' : ''}">${md}</div>
+          <div class="timeline-weekday">${weekday}</div>
+        </div>
+        <div class="timeline-node${isLatest ? ' latest' : ''}"></div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="timeline-cards">${cardsHtml}</div>
+    </div>
+  `;
 }
 
 function shortDate(dateStr) {
   return dateStr ? dateStr.slice(5).replace('-', '/') : '';
 }
 
-function renderTripSummaryCard(outbound, inbound) {
-  const expanded = expandedTrips.has(outbound.id);
-  const colors = [...new Set([outbound, inbound].map(r => window.AIRLINE_META?.[r.airline_id]?.color).filter(Boolean))];
-  const accentColor = colors[0] || '#f0c252';
-  const airlineNames = [...new Set([outbound, inbound].map(r =>
-    (window.AIRLINE_META?.[r.airline_id]?.shortName) || r.airline_id).filter(Boolean))].join(' ・ ');
-  return `
-    <div class="trip-summary-card" style="--accent:${accentColor}" onclick="toggleTripExpand('${outbound.id}')">
-      <div class="trip-summary-head">
-        <div class="trip-summary-route">
-          <span class="flight-stub-iata">${outbound.dep_iata}</span>
-          <span class="trip-summary-plane">✈</span>
-          <span class="flight-stub-iata">${outbound.arr_iata}</span>
-        </div>
-        <div class="trip-summary-dates">${shortDate(outbound.flight_date)} → ${shortDate(inbound.flight_date)}</div>
-        ${airlineNames ? `<div class="trip-summary-airlines">${airlineNames}</div>` : ''}
-      </div>
-      <div class="trip-summary-tear">
-        <span>去回 2 段</span>
-        <span class="trip-summary-chevron">${expanded ? '︿' : '﹀'}</span>
-      </div>
-    </div>
-    ${expanded ? renderFlightStub(outbound, '去') + renderFlightStub(inbound, '回') : ''}
-  `;
+function cityOf(iata) {
+  return window.AIRPORT_MASTER?.[iata]?.city || iata;
 }
 
-function renderFlightStub(r, tripLabel) {
-  const airlineName = (window.AIRLINE_META?.[r.airline_id]?.shortName) || r.airline_id || '';
-  const accentColor = window.AIRLINE_META?.[r.airline_id]?.color || '#f0c252';
+function toggleTicketEditMenu(event, key) {
+  event.stopPropagation();
+  document.querySelectorAll('.ticket-edit-menu.show').forEach(el => {
+    if (el.id !== `ticket-menu-${key}`) el.classList.remove('show');
+  });
+  document.getElementById(`ticket-menu-${key}`)?.classList.toggle('show');
+}
+document.addEventListener('click', () => {
+  document.querySelectorAll('.ticket-edit-menu.show').forEach(el => el.classList.remove('show'));
+});
+
+function renderTicketCard(outbound, inbound) {
+  const isRoundTrip = !!inbound;
+  const dateRangeText = isRoundTrip
+    ? `${outbound.flight_date} — ${shortDate(inbound.flight_date)}`
+    : outbound.flight_date;
+
+  const legs = isRoundTrip
+    ? [['去程', outbound], ['回程', inbound]]
+    : [['單程', outbound]];
+
+  const legRowsHtml = legs.map(([label, r]) => `
+    <div class="ticket-leg-row">
+      <span class="ticket-leg-label">${label}</span>
+      <span class="ticket-leg-date">${shortDate(r.flight_date)}</span>
+      <span class="ticket-leg-route">${r.dep_iata} → ${r.arr_iata}</span>
+      <span class="ticket-leg-km">${r.distance_km ? r.distance_km.toLocaleString() + ' km' : ''}</span>
+    </div>
+  `).join('');
+
+  const menuKey = outbound.id;
+  const editMenuHtml = isRoundTrip ? `
+    <div class="ticket-edit-menu" id="ticket-menu-${menuKey}">
+      <button type="button" onclick="editFlightLog('${outbound.id}')">編輯去程</button>
+      <button type="button" onclick="editFlightLog('${inbound.id}')">編輯回程</button>
+    </div>
+  ` : '';
+  const editBtnOnclick = isRoundTrip
+    ? `toggleTicketEditMenu(event, '${menuKey}')`
+    : `editFlightLog('${outbound.id}')`;
+
   return `
-    <div class="flight-stub${tripLabel ? ' flight-stub-paired' : ''}" style="--accent:${accentColor}">
-      ${tripLabel ? `<div class="flight-stub-trip-label">${tripLabel}程</div>` : ''}
-      <div class="flight-stub-main">
-        <div class="flight-stub-route">
-          <span class="flight-stub-iata">${r.dep_iata}</span>
-          <span class="flight-stub-arrow">→</span>
-          <span class="flight-stub-iata">${r.arr_iata}</span>
+    <div class="ticket-card">
+      <div class="ticket-badge">${isRoundTrip ? '往返' : '單程'}</div>
+      <div class="ticket-daterange">${dateRangeText}</div>
+      <div class="ticket-route">
+        <div class="ticket-endpoint">
+          <div class="ticket-iata">${outbound.dep_iata}</div>
+          <div class="ticket-city">${cityOf(outbound.dep_iata)}</div>
         </div>
-        <div class="flight-stub-meta">
-          <span><b>${r.flight_date}</b></span>
-          ${airlineName ? `<span>${airlineName}</span>` : ''}
-          ${r.distance_km ? `<span>${r.distance_km.toLocaleString()} km</span>` : ''}
+        <div class="ticket-line"><span class="ticket-plane">✈</span></div>
+        <div class="ticket-endpoint">
+          <div class="ticket-iata">${outbound.arr_iata}</div>
+          <div class="ticket-city">${cityOf(outbound.arr_iata)}</div>
         </div>
-        ${r.note ? `<div class="flight-stub-note">${r.note.replace(/</g, '&lt;')}</div>` : ''}
       </div>
-      <div class="flight-stub-tear">${(r.flight_no || '').replace(/</g, '&lt;')}</div>
-      <button class="flight-stub-edit" onclick="editFlightLog('${r.id}')" aria-label="編輯紀錄">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2-7.5 7.5-2.6.6.6-2.6 7.5-7.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      <div class="ticket-divider"></div>
+      ${legRowsHtml}
+      <button class="ticket-edit-btn" type="button" onclick="${editBtnOnclick}" aria-label="編輯紀錄">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2-7.5 7.5-2.6.6.6-2.6 7.5-7.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
       </button>
-      <button class="flight-stub-del" onclick="deleteFlightLog('${r.id}')" aria-label="刪除紀錄">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.6 9h5.8l.6-9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+      ${editMenuHtml}
     </div>
   `;
 }
@@ -3847,6 +3919,7 @@ async function maybePairFlightLog(newRow) {
 
 function clearFlightLogRouteFilter() {
   flightLogRouteFilter = null;
+  flightLogVisibleGroups = 5;
   renderFlightLogPanel();
 }
 
@@ -3854,6 +3927,14 @@ function openFlightLogPanelForRoute(dep, arr) {
   openAchievementGallery();
   switchGalleryTab('flight');
   flightLogRouteFilter = { dep, arr };
+  flightLogVisibleGroups = 5;
+}
+
+async function deleteFlightLogFromSheet() {
+  if (!editingFlightLogId) return;
+  const id = editingFlightLogId;
+  closeAddFlightSheet();
+  await deleteFlightLog(id);
 }
 
 async function deleteFlightLog(id) {
@@ -3983,6 +4064,7 @@ function openAddFlightSheet() {
   document.getElementById('af-note').value = '';
   document.getElementById('af-msg').textContent = '';
   document.getElementById('af-date').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('af-delete-btn').style.display = 'none';
   document.getElementById('add-flight-sheet').classList.add('show');
 }
 
@@ -4000,6 +4082,7 @@ function editFlightLog(id) {
   document.getElementById('af-date').value = row.flight_date || '';
   document.getElementById('af-note').value = row.note || '';
   document.getElementById('af-msg').textContent = '';
+  document.getElementById('af-delete-btn').style.display = 'block';
   document.getElementById('add-flight-sheet').classList.add('show');
 }
 
