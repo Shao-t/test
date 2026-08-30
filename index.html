@@ -1364,6 +1364,7 @@
     }
     .ticket-leg-block + .ticket-leg-block .ticket-leg-row { padding-top: 2px; }
     .ticket-leg-airline { font-size: 10px; font-weight: 600; margin: 0 0 2px 42px; }
+    .ticket-note { font-size: 11px; color: #86868b; margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(0,0,0,0.08); }
     .ticket-leg-label { color: rgba(235,241,249,.5); flex: 0 0 32px; }
     .ticket-leg-date { color: var(--deck-ink); font-weight: 600; flex: 0 0 auto; }
     .ticket-leg-route { flex: 1; color: var(--deck-ink); }
@@ -1412,6 +1413,15 @@
       border-radius: 10px; padding: 10px 11px; color: var(--deck-ink); font-size: 13.5px; font-family: inherit;
     }
     .flight-log-field input:disabled { opacity: .5; cursor: not-allowed; }
+    .flight-log-field select {
+      width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+      border-radius: 10px; padding: 10px 11px; color: var(--deck-ink); font-size: 13.5px; font-family: inherit;
+    }
+    .date-select-group { display: flex; gap: 4px; }
+    .date-select-group select {
+      flex: 1; min-width: 0; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+      border-radius: 8px; padding: 8px 2px; color: var(--deck-ink); font-size: 12px; font-family: inherit; text-align: center;
+    }
     .flight-log-field textarea {
       width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
       border-radius: 10px; padding: 10px 11px; color: var(--deck-ink); font-size: 13px; font-family: inherit;
@@ -1643,11 +1653,35 @@
       </div>
       <div class="flight-log-field-row">
         <div class="flight-log-field"><label id="af-dep-flightno-label">去程航班號（選填）</label><input id="af-dep-flightno" placeholder="FM802"></div>
-        <div class="flight-log-field"><label id="af-dep-date-label">去程日期</label><input id="af-dep-date" type="date"></div>
+        <div class="flight-log-field">
+          <label id="af-dep-date-label">去程日期</label>
+          <div class="date-select-group">
+            <select id="af-dep-date-y" onchange="syncDateSelectToHidden('af-dep-date')"></select>
+            <select id="af-dep-date-m" onchange="syncDateSelectToHidden('af-dep-date')"></select>
+            <select id="af-dep-date-d" onchange="syncDateSelectToHidden('af-dep-date')"></select>
+          </div>
+          <input type="hidden" id="af-dep-date">
+        </div>
+      </div>
+      <div class="flight-log-field" id="af-dep-airline-field">
+        <label>航空公司（選填）</label>
+        <select id="af-dep-airline"></select>
       </div>
       <div class="flight-log-field-row" id="af-return-row">
         <div class="flight-log-field"><label>回程航班號（選填）</label><input id="af-arr-flightno" placeholder="FM803"></div>
-        <div class="flight-log-field"><label>回程日期</label><input id="af-arr-date" type="date"></div>
+        <div class="flight-log-field">
+          <label>回程日期</label>
+          <div class="date-select-group">
+            <select id="af-arr-date-y" onchange="syncDateSelectToHidden('af-arr-date')"></select>
+            <select id="af-arr-date-m" onchange="syncDateSelectToHidden('af-arr-date')"></select>
+            <select id="af-arr-date-d" onchange="syncDateSelectToHidden('af-arr-date')"></select>
+          </div>
+          <input type="hidden" id="af-arr-date">
+        </div>
+      </div>
+      <div class="flight-log-field" id="af-return-airline-field">
+        <label>回程航空公司（選填）</label>
+        <select id="af-arr-airline"></select>
       </div>
       <div class="flight-log-field">
         <label>備註（選填）</label>
@@ -2608,6 +2642,8 @@ window.addEventListener("DOMContentLoaded", () => {
     });
     headerResizeObserver.observe(header);
   }
+
+  initAddFlightSheetControls();
 
   // Star rating listeners (moved here to guarantee DOM is ready and isolate from map init)
   document.querySelectorAll('.fb-star').forEach(s => {
@@ -3890,10 +3926,13 @@ function renderTicketCard(outbound, inbound, crossYear) {
         <span class="ticket-leg-route">${r.dep_iata} → ${r.arr_iata}</span>
         <span class="ticket-leg-km">${r.distance_km ? r.distance_km.toLocaleString() + ' km' : ''}</span>
       </div>
-      ${airlineName ? `<div class="ticket-leg-airline" style="color:${airlineColor}">${airlineName}</div>` : ''}
+      ${(airlineName || r.flight_no) ? `<div class="ticket-leg-airline" style="color:${airlineColor}">${[airlineName, r.flight_no ? escHtml(r.flight_no) : ''].filter(Boolean).join(' · ')}</div>` : ''}
     </div>
   `;
   }).join('');
+  const noteHtml = outbound.note || inbound?.note
+    ? `<div class="ticket-note">${[outbound.note, inbound?.note].filter(Boolean).map(escHtml).join(' / ')}</div>`
+    : '';
 
   const menuKey = outbound.id;
   const editMenuHtml = isRoundTrip ? `
@@ -3923,6 +3962,7 @@ function renderTicketCard(outbound, inbound, crossYear) {
       </div>
       <div class="ticket-divider"></div>
       ${legRowsHtml}
+      ${noteHtml}
       <button class="ticket-edit-btn" type="button" onclick="${editBtnOnclick}" aria-label="編輯紀錄">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2-7.5 7.5-2.6.6.6-2.6 7.5-7.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
       </button>
@@ -4086,11 +4126,55 @@ async function toggleMyFlightsOnMap() {
 let editingFlightLogId = null; // 若非 null，表單為「編輯模式」，只允許改航班號與日期
 let addFlightOneway = false; // 新增飛行紀錄表單模式：false＝去回程（預設，一次存兩筆並直接配對），true＝只加單程
 
+function escHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// 下拉式日期選單：年份範圍為今年-15 ~ 今年+1
+function initDateSelectOptions(prefix) {
+  const nowY = new Date().getFullYear();
+  const yearOpts = [];
+  for (let y = nowY + 1; y >= nowY - 15; y--) yearOpts.push(`<option value="${y}">${y}</option>`);
+  document.getElementById(`${prefix}-y`).innerHTML = yearOpts.join('');
+  document.getElementById(`${prefix}-m`).innerHTML = Array.from({ length: 12 }, (_, i) => i + 1)
+    .map(m => `<option value="${m}">${m} 月</option>`).join('');
+  document.getElementById(`${prefix}-d`).innerHTML = Array.from({ length: 31 }, (_, i) => i + 1)
+    .map(d => `<option value="${d}">${d} 日</option>`).join('');
+}
+function setDateSelectValue(prefix, dateStr) {
+  const d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
+  document.getElementById(`${prefix}-y`).value = d.getFullYear();
+  document.getElementById(`${prefix}-m`).value = d.getMonth() + 1;
+  document.getElementById(`${prefix}-d`).value = d.getDate();
+  syncDateSelectToHidden(prefix);
+}
+function syncDateSelectToHidden(prefix) {
+  const y = document.getElementById(`${prefix}-y`).value;
+  const m = String(document.getElementById(`${prefix}-m`).value).padStart(2, '0');
+  const d = String(document.getElementById(`${prefix}-d`).value).padStart(2, '0');
+  document.getElementById(prefix).value = `${y}-${m}-${d}`;
+}
+
+// 航空公司選單：沿用既有的 AIRLINE_IDS / airlineCommercialName
+function initAirlineSelectOptions(selectId) {
+  const el = document.getElementById(selectId);
+  el.innerHTML = '<option value="">未指定</option>' +
+    AIRLINE_IDS.map(id => `<option value="${id}">${escHtml(airlineCommercialName(id))}</option>`).join('');
+}
+
+function initAddFlightSheetControls() {
+  initDateSelectOptions('af-dep-date');
+  initDateSelectOptions('af-arr-date');
+  initAirlineSelectOptions('af-dep-airline');
+  initAirlineSelectOptions('af-arr-airline');
+}
+
 function setAddFlightOnewayUI(oneway) {
   addFlightOneway = oneway;
   document.getElementById('af-oneway-switch').classList.toggle('on', oneway);
   document.getElementById('af-oneway-switch').setAttribute('aria-pressed', String(oneway));
   document.getElementById('af-return-row').style.display = oneway ? 'none' : 'flex';
+  document.getElementById('af-return-airline-field').style.display = oneway ? 'none' : 'block';
   document.getElementById('af-dep-flightno-label').textContent = oneway ? '航班號（選填）' : '去程航班號（選填）';
   document.getElementById('af-dep-date-label').textContent = oneway ? '日期' : '去程日期';
 }
@@ -4121,8 +4205,10 @@ function openAddFlightSheet() {
   document.getElementById('af-note').value = '';
   document.getElementById('af-msg').textContent = '';
   const today = new Date().toISOString().slice(0, 10);
-  document.getElementById('af-dep-date').value = today;
-  document.getElementById('af-arr-date').value = today;
+  setDateSelectValue('af-dep-date', today);
+  setDateSelectValue('af-arr-date', today);
+  document.getElementById('af-dep-airline').value = '';
+  document.getElementById('af-arr-airline').value = '';
   document.getElementById('af-delete-btn').style.display = 'none';
   document.getElementById('af-oneway-row').style.display = 'flex';
   setAddFlightOnewayUI(false); // 預設一律開在「去回程」模式，包含從地圖點「搭乘過」進來
@@ -4142,10 +4228,12 @@ function editFlightLog(id) {
   // 編輯模式只改單一段紀錄，不顯示去回程切換與回程欄位
   document.getElementById('af-oneway-row').style.display = 'none';
   document.getElementById('af-return-row').style.display = 'none';
+  document.getElementById('af-return-airline-field').style.display = 'none';
   document.getElementById('af-dep-flightno-label').textContent = '航班號（選填）';
   document.getElementById('af-dep-date-label').textContent = '日期';
   document.getElementById('af-dep-flightno').value = row.flight_no || '';
-  document.getElementById('af-dep-date').value = row.flight_date || '';
+  setDateSelectValue('af-dep-date', row.flight_date || '');
+  document.getElementById('af-dep-airline').value = row.airline_id || '';
   document.getElementById('af-note').value = row.note || '';
   document.getElementById('af-msg').textContent = '';
   document.getElementById('af-delete-btn').style.display = 'block';
@@ -4167,8 +4255,9 @@ async function submitAddFlightSheet() {
     if (!date) { msgEl.textContent = '請選擇日期'; msgEl.style.color = '#ef4444'; return; }
     msgEl.textContent = '更新中...'; msgEl.style.color = 'rgba(235,241,249,.6)';
     try {
+      const airlineId = document.getElementById('af-dep-airline').value;
       const { error } = await supabaseClient.from('flight_logs')
-        .update({ flight_no: flightNo || null, flight_date: date, note: note || null })
+        .update({ flight_no: flightNo || null, flight_date: date, note: note || null, airline_id: airlineId || null })
         .eq('id', editingFlightLogId);
       if (error) throw error;
       closeAddFlightSheet();
@@ -4192,6 +4281,7 @@ async function submitAddFlightSheet() {
   }
 
   const depFlightNo = document.getElementById('af-dep-flightno').value.trim();
+  const depAirlineId = document.getElementById('af-dep-airline').value;
   const depDate = document.getElementById('af-dep-date').value || new Date().toISOString().slice(0, 10);
   const distanceKm = haversineKm(window.AIRPORT_MASTER[dep].coords, window.AIRPORT_MASTER[arr].coords);
 
@@ -4206,7 +4296,8 @@ async function submitAddFlightSheet() {
         flight_no: depFlightNo || null,
         flight_date: depDate,
         distance_km: distanceKm || null,
-        note: note || null
+        note: note || null,
+        airline_id: depAirlineId || null
       }).select().single();
       if (error) throw error;
       closeAddFlightSheet();
@@ -4222,6 +4313,7 @@ async function submitAddFlightSheet() {
 
   // 去回程模式（預設）：一次存兩筆，並直接互相寫入 paired_log_id，不用再靠日期猜測配對
   const retFlightNo = document.getElementById('af-arr-flightno').value.trim();
+  const retAirlineId = document.getElementById('af-arr-airline').value;
   const retDate = document.getElementById('af-arr-date').value || depDate;
   if (depDate > retDate) {
     msgEl.textContent = '去程日期不能晚於回程日期'; msgEl.style.color = '#ef4444'; return;
@@ -4235,7 +4327,8 @@ async function submitAddFlightSheet() {
       flight_no: depFlightNo || null,
       flight_date: depDate,
       distance_km: distanceKm || null,
-      note: note || null
+      note: note || null,
+      airline_id: depAirlineId || null
     }).select().single();
     if (outErr) throw outErr;
 
@@ -4246,7 +4339,8 @@ async function submitAddFlightSheet() {
       flight_no: retFlightNo || null,
       flight_date: retDate,
       distance_km: distanceKm || null,
-      note: note || null
+      note: note || null,
+      airline_id: retAirlineId || null
     }).select().single();
     if (inErr) throw inErr;
 
