@@ -1422,6 +1422,9 @@
       flex: 1; min-width: 0; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
       border-radius: 8px; padding: 8px 2px; color: var(--deck-ink); font-size: 12px; font-family: inherit; text-align: center;
     }
+    @media (max-width: 400px) {
+      .date-field-row { flex-direction: column; }
+    }
     .flight-log-field textarea {
       width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
       border-radius: 10px; padding: 10px 11px; color: var(--deck-ink); font-size: 13px; font-family: inherit;
@@ -1651,7 +1654,7 @@
         <span>只加單程（不新增回程）</span>
         <button type="button" class="flight-log-oneway-switch" id="af-oneway-switch" onclick="toggleAddFlightOneway()" aria-pressed="false" aria-label="只加單程"></button>
       </div>
-      <div class="flight-log-field-row">
+      <div class="flight-log-field-row date-field-row">
         <div class="flight-log-field"><label id="af-dep-flightno-label">去程航班號（選填）</label><input id="af-dep-flightno" placeholder="FM802"></div>
         <div class="flight-log-field">
           <label id="af-dep-date-label">去程日期</label>
@@ -1667,7 +1670,7 @@
         <label>航空公司（選填）</label>
         <select id="af-dep-airline"></select>
       </div>
-      <div class="flight-log-field-row" id="af-return-row">
+      <div class="flight-log-field-row date-field-row" id="af-return-row">
         <div class="flight-log-field"><label>回程航班號（選填）</label><input id="af-arr-flightno" placeholder="FM803"></div>
         <div class="flight-log-field">
           <label>回程日期</label>
@@ -3749,7 +3752,7 @@ function renderFlightLogRecords(rows) {
     },
     {
       label: '最常搭乘',
-      value: topAirlineId ? (window.AIRLINE_META?.[topAirlineId]?.shortName || topAirlineId) : '—',
+      value: topAirlineId ? (window.AIRLINE_META?.[topAirlineId]?.commercialName || topAirlineId) : '—',
       sub: topAirlineId ? `${airlineCounts[topAirlineId]} 趟` : '',
     },
     {
@@ -3801,7 +3804,12 @@ function renderFlightLogPanel() {
     const pair = r.paired_log_id ? flightLogsCache.find(x => x.id === r.paired_log_id) : null;
     if (pair) {
       rendered.add(pair.id);
-      const [outbound, inbound] = (r.flight_date <= pair.flight_date) ? [r, pair] : [pair, r];
+      // 判斷去程/回程：先比日期，日期相同（同天來回）時改比 created_at（先建立的一筆＝去程），
+      // 避免日期打平時陣列順序（依 created_at desc 抓資料）把回程誤判成去程。
+      const rIsEarlier = r.flight_date !== pair.flight_date
+        ? r.flight_date < pair.flight_date
+        : r.created_at <= pair.created_at;
+      const [outbound, inbound] = rIsEarlier ? [r, pair] : [pair, r];
       // 去回程跨年時（例如去程 2023/12/30、回程 2024/1/5），篩選其中一個年份仍會完整顯示這趟行程，
       // 用 crossYear 標記讓卡片加註提示，避免使用者誤以為篩選功能出錯。
       const crossYear = outbound.flight_date.slice(0, 4) !== inbound.flight_date.slice(0, 4);
@@ -3906,8 +3914,11 @@ document.addEventListener('click', () => {
 
 function renderTicketCard(outbound, inbound, crossYear) {
   const isRoundTrip = !!inbound;
+  const tripDays = isRoundTrip
+    ? Math.max(Math.round((new Date(inbound.flight_date) - new Date(outbound.flight_date)) / 86400000) + 1, 1)
+    : null;
   const dateRangeText = isRoundTrip
-    ? `${outbound.flight_date} — ${shortDate(inbound.flight_date)}`
+    ? `${outbound.flight_date} — ${shortDate(inbound.flight_date)}（${tripDays} 天）`
     : outbound.flight_date;
 
   const legs = isRoundTrip
