@@ -576,6 +576,16 @@ window.AIRLINE_DATA = {
     { iata:"AKL", city:"奧克蘭", airportName:"Auckland Airport", country:"New Zealand", coords:[-37.0082,174.785], region:"OCEANIA", frequency:9, frequencyType:"weekly", lastUpdated:"2026-08", flightNumbers:["MU779","MU745"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE", nonstop:true, stops:[] },
     { iata:"TBS", city:"第比利斯", airportName:"Tbilisi International Airport", country:"Georgia", coords:[41.6693,44.9547], region:"CENTRAL_ASIA", frequency:3, frequencyType:"weekly", lastUpdated:"2026-08", flightNumbers:["MU285"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE", effectiveDate:"2026-07-15" },
     { iata:"DUB", city:"都柏林", airportName:"Dublin Airport", country:"Ireland", coords:[53.4213,-6.2701], region:"EUROPE", frequency:3, frequencyType:"weekly", lastUpdated:"2026-08", flightNumbers:["MU231"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE", effectiveDate:"2026-07-20" },
+
+    // ── PVG 出發之中國大陸幹線（依 2026-08/09 第三方班表資料補齊）──
+    { iata:"NKG", city:"南京", airportName:"Nanjing Lukou International Airport", country:"China", coords:[31.742,118.8622], region:"CHINA", frequency:15, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MU2882"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE" },
+    { iata:"WUH", city:"武漢", airportName:"Wuhan Tianhe International Airport", country:"China", coords:[30.7838,114.2081], region:"CHINA", frequency:null, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MU2504","MU2508","MU2512","MU2524","MU2544"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE" },
+    { iata:"TAO", city:"青島", airportName:"Qingdao Jiaodong International Airport", country:"China", coords:[36.3614,120.3747], region:"CHINA", frequency:null, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MU5589","MU5511","MU6713","MU5563","MU5574","MU9995"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE" },
+    { iata:"TFU", city:"成都天府", airportName:"Chengdu Tianfu International Airport", country:"China", coords:[30.3128,104.4417], region:"CHINA", frequency:null, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MU5295","MU5419","MU5411"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE" },
+    { iata:"KMG", city:"昆明", airportName:"Kunming Changshui International Airport", country:"China", coords:[25.1019,102.9292], region:"CHINA", frequency:36, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MU5383","MU5816","MU5818","MU5822"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE" },
+    { iata:"XIY", city:"西安", airportName:"Xi'an Xianyang International Airport", country:"China", coords:[34.4471,108.7516], region:"CHINA", frequency:null, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MU2335","MU2193","MU6715","MU6178"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE" },
+    { iata:"PKX", city:"北京大興", airportName:"Beijing Daxing International Airport", country:"China", coords:[39.5098,116.4105], region:"CHINA", frequency:14, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MU5232","MU5196"], origin:"PVG", airline:"MU", alliance:"SkyTeam", status:"ACTIVE" },
+    { iata:"PVG", city:"上海浦東", airportName:"Shanghai Pudong International Airport", country:"China", coords:[31.1443,121.8083], region:"CHINA", frequency:14, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MU5130"], origin:"PKX", airline:"MU", alliance:"SkyTeam", status:"ACTIVE" },
   ],
 
   // ─── 捷星日本 GK ──────────────────────────────────────────────────────────
@@ -893,6 +903,7 @@ window.AIRLINE_DATA = {
     ["ICN", "LIS", "SEASONAL", ["KE921"]],
     ["ICN", "RMQ", "SCHEDULED", ["KE2031"], "2026-10-25"],
     ["ICN", "CXR", "ACTIVE", ["KE467"]],
+    ["ICN", "PUS", "ACTIVE", ["KE1401","KE1403"]],
     ["PUS", "PEK", "ACTIVE", ["KE2061"]],
     ["PUS", "TAO", "ACTIVE", ["KE2081"]],
     ["CJU", "PEK", "ACTIVE", ["KE2065"]],
@@ -1002,6 +1013,12 @@ window.AIRLINE_DATA = {
     })
   );
 })();
+
+// ── 廈門航空 MF：XMN 出發之福州／杭州航線（已確認班機號，獨立於上方群組式資料）──
+window.AIRLINE_DATA.MF.push(
+  { iata:"FOC", city:"福州", airportName:"Fuzhou Changle International Airport", country:"China", coords:[25.9352,119.663], region:"CHINA", frequency:7, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MF8579","MF2911"], origin:"XMN", airline:"MF", alliance:"SkyTeam", status:"ACTIVE", nonstop:true, stops:[] },
+  { iata:"HGH", city:"杭州", airportName:"Hangzhou Xiaoshan International Airport", country:"China", coords:[30.2295,120.4344], region:"CHINA", frequency:null, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:["MF8595","MF8596"], origin:"XMN", airline:"MF", alliance:"SkyTeam", status:"ACTIVE", nonstop:true, stops:[] }
+);
 
 // ─── 土耳其航空 TK：IST 出發國際直飛航線（不含土耳其國內線）─────────────
 // 依 2026-08 航網整理；季節航點標為 SEASONAL，大洋洲無 IST 直飛故不列入。
