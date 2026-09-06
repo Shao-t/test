@@ -42,6 +42,7 @@ window.AIRLINE_META = {
   MF: { legalName:"廈門航空有限公司", commercialName:"XiamenAir", shortName:"廈航", fullName:"XiamenAir", hub:"XMN", alliance:"SkyTeam", color:"#0072BC", colorDim:"rgba(0,114,188,0.35)", hubCoords:[24.544,118.1277] },
   TK: { legalName:"土耳其航空", commercialName:"Turkish Airlines", shortName:"土航", fullName:"Turkish Airlines", hub:"IST", alliance:"Star Alliance", color:"#E30A17", colorDim:"rgba(227,10,23,0.35)", hubCoords:[41.2753,28.7519] },
   CX: { legalName:"國泰航空有限公司", commercialName:"Cathay Pacific", shortName:"國泰航空", fullName:"Cathay Pacific", hub:"HKG", alliance:"oneworld", color:"#006564", colorDim:"rgba(0,101,100,0.35)", hubCoords:[22.308,113.9185] },
+  AF: { legalName:"法國航空公司", commercialName:"Air France", shortName:"法國航空", fullName:"Air France", hub:"CDG", alliance:"SkyTeam", color:"#002157", colorDim:"rgba(0,33,87,0.35)", hubCoords:[49.0097,2.5479] },
 };
 
 window.AIRPORT_MASTER = {
@@ -286,9 +287,51 @@ window.AIRPORT_MASTER = {
   YYZ: { city:"多倫多", airportName:"Toronto Pearson International Airport", country:"Canada", coords:[43.6777,-79.6248], region:"NORTH_AMERICA" },
   ZNZ: { city:"尚吉巴", airportName:"Abeid Amani Karume International Airport", country:"Tanzania", coords:[-6.222,39.2249], region:"AFRICA" },
   ZRH: { city:"蘇黎世", airportName:"Zurich Airport", country:"Switzerland", coords:[47.4582,8.5481], region:"EUROPE" },
+  // ─── AF 新增機場 ─────────────────────────────────────────────────────────
+  EWR: { city:"紐約紐華克", airportName:"Newark Liberty International Airport", country:"United States", coords:[40.6895,-74.1745], region:"NORTH_AMERICA" },
+  DEN: { city:"丹佛", airportName:"Denver International Airport", country:"United States", coords:[39.8561,-104.6737], region:"NORTH_AMERICA" },
+  DTW: { city:"底特律", airportName:"Detroit Metropolitan Wayne County Airport", country:"United States", coords:[42.2162,-83.3554], region:"NORTH_AMERICA" },
+  MSP: { city:"明尼阿波利斯", airportName:"Minneapolis-Saint Paul International Airport", country:"United States", coords:[44.8848,-93.2223], region:"NORTH_AMERICA" },
+  MIA: { city:"邁阿密", airportName:"Miami International Airport", country:"United States", coords:[25.7959,-80.287], region:"NORTH_AMERICA" },
+  MCO: { city:"奧蘭多", airportName:"Orlando International Airport", country:"United States", coords:[28.4312,-81.3081], region:"NORTH_AMERICA" },
+  RDU: { city:"羅利達勒姆", airportName:"Raleigh-Durham International Airport", country:"United States", coords:[35.8776,-78.7875], region:"NORTH_AMERICA" },
+  YUL: { city:"蒙特婁", airportName:"Montréal-Trudeau International Airport", country:"Canada", coords:[45.4706,-73.7408], region:"NORTH_AMERICA" },
+  YOW: { city:"渥太華", airportName:"Ottawa International Airport", country:"Canada", coords:[45.3225,-75.6692], region:"NORTH_AMERICA" },
+  YQB: { city:"魁北克市", airportName:"Québec City Jean Lesage International Airport", country:"Canada", coords:[46.7911,-71.3933], region:"NORTH_AMERICA" },
+  MEX: { city:"墨西哥城", airportName:"Mexico City International Airport", country:"Mexico", coords:[19.4363,-99.0721], region:"NORTH_AMERICA" },
+  SJO: { city:"聖荷西", airportName:"Juan Santamaría International Airport", country:"Costa Rica", coords:[9.9939,-84.2088], region:"NORTH_AMERICA" },
+  PUJ: { city:"蓬塔卡納", airportName:"Punta Cana International Airport", country:"Dominican Republic", coords:[18.5674,-68.3634], region:"NORTH_AMERICA" },
+  GIG: { city:"里約熱內盧", airportName:"Rio de Janeiro/Galeão International Airport", country:"Brazil", coords:[-22.8099,-43.2506], region:"SOUTH_AMERICA" },
+  FOR: { city:"福塔雷薩", airportName:"Pinto Martins International Airport", country:"Brazil", coords:[-3.7763,-38.5326], region:"SOUTH_AMERICA" },
+  SSA: { city:"薩爾瓦多", airportName:"Salvador-Deputado Luís Eduardo Magalhães International Airport", country:"Brazil", coords:[-12.9086,-38.3225], region:"SOUTH_AMERICA" },
+  GRU: { city:"聖保羅", airportName:"São Paulo/Guarulhos International Airport", country:"Brazil", coords:[-23.4356,-46.4731], region:"SOUTH_AMERICA" },
+  SCL: { city:"聖地牙哥", airportName:"Arturo Merino Benítez International Airport", country:"Chile", coords:[-33.393,-70.7858], region:"SOUTH_AMERICA" },
+  BOG: { city:"波哥大", airportName:"El Dorado International Airport", country:"Colombia", coords:[4.7016,-74.1469], region:"SOUTH_AMERICA" },
+  PTY: { city:"巴拿馬城", airportName:"Tocumen International Airport", country:"Panama", coords:[9.0714,-79.3835], region:"SOUTH_AMERICA" },
+  LIM: { city:"利馬", airportName:"Jorge Chávez International Airport", country:"Peru", coords:[-12.0219,-77.1143], region:"SOUTH_AMERICA" },
+  CAY: { city:"開雲", airportName:"Cayenne-Félix Eboué Airport", country:"French Guiana", coords:[4.8198,-52.3619], region:"SOUTH_AMERICA" },
+  PPT: { city:"帕皮提", airportName:"Faa'a International Airport", country:"French Polynesia", coords:[-17.5567,-149.6114], region:"OCEANIA" },
+  ABJ: { city:"阿必尚", airportName:"Félix-Houphouët-Boigny International Airport", country:"Côte d'Ivoire", coords:[5.2614,-3.9263], region:"AFRICA" },
+  ABV: { city:"阿布賈", airportName:"Nnamdi Azikiwe International Airport", country:"Nigeria", coords:[9.0068,7.2632], region:"AFRICA" },
+  JRO: { city:"吉力馬札羅", airportName:"Kilimanjaro International Airport", country:"Tanzania", coords:[-3.4294,37.0745], region:"AFRICA" },
+  BZV: { city:"布拉薩", airportName:"Maya-Maya Airport", country:"Republic of the Congo", coords:[-4.2517,15.253], region:"AFRICA" },
+  FIH: { city:"金夏沙", airportName:"N'djili Airport", country:"Democratic Republic of the Congo", coords:[-4.3858,15.4446], region:"AFRICA" },
+  PNR: { city:"黑角", airportName:"Antonio Agostinho-Neto International Airport", country:"Republic of the Congo", coords:[-4.816,11.8866], region:"AFRICA" },
+  DLA: { city:"杜阿拉", airportName:"Douala International Airport", country:"Cameroon", coords:[4.0061,9.7195], region:"AFRICA" },
+  NSI: { city:"雅溫得", airportName:"Yaoundé Nsimalen International Airport", country:"Cameroon", coords:[3.7226,11.5533], region:"AFRICA" },
+  NDJ: { city:"恩賈梅納", airportName:"N'Djamena International Airport", country:"Chad", coords:[12.1337,15.034], region:"AFRICA" },
+  SSG: { city:"馬拉博", airportName:"Malabo International Airport", country:"Equatorial Guinea", coords:[3.7553,8.7087], region:"AFRICA" },
+  COO: { city:"柯多努", airportName:"Cadjehoun Airport", country:"Benin", coords:[6.3572,2.3843], region:"AFRICA" },
+  LBV: { city:"利伯維爾", airportName:"Libreville Leon M'ba International Airport", country:"Gabon", coords:[0.4586,9.4123], region:"AFRICA" },
+  LFW: { city:"洛美", airportName:"Lomé-Tokoin International Airport", country:"Togo", coords:[6.1656,1.2545], region:"AFRICA" },
+  RUN: { city:"聖但尼", airportName:"Roland Garros Airport", country:"Réunion", coords:[-20.8871,55.5103], region:"AFRICA" },
+  PTP: { city:"皮特爾角城", airportName:"Pointe-à-Pitre International Airport", country:"Guadeloupe", coords:[16.2653,-61.5318], region:"NORTH_AMERICA" },
+  FDF: { city:"法蘭西堡", airportName:"Martinique Aimé Césaire International Airport", country:"Martinique", coords:[14.5908,-61.0032], region:"NORTH_AMERICA" },
 };
 
 window.AIRLINE_DATA = {
+
+  AF: [],
 
   // ─── 星宇航空 JX ──────────────────────────────────────────────────────────
   JX: [
@@ -1377,5 +1420,107 @@ window.AIRLINE_DATA.MF.push(
       delete route.nonstop;
       delete route.stops;
     }
+  });
+})();
+
+(() => {
+  // AF 法國航空客運航線(2026-09 整理,含區間頻率取下限、待確認欄位留null、
+  // 停飛航線[CUN/MNL/CPT]不匯入、多段轉機航線簡化為單一stops陣列)
+  const routeSpecs = [
+    ["LAS", "ACTIVE", 3, ["AF56"], true, []],
+    ["EWR", "ACTIVE", 12, [], true, []],
+    ["ATL", "ACTIVE", 17, ["AF30","AF32","AF34"], true, []],
+    ["BOS", "ACTIVE", 14, ["AF333","AF334"], true, []],
+    ["DFW", "ACTIVE", 5, [], true, []],
+    ["DEN", "SEASONAL", 3, [], true, []],
+    ["DTW", "ACTIVE", 7, [], true, []],
+    ["IAH", "ACTIVE", 7, [], true, []],
+    ["JFK", "ACTIVE", null, ["AF9","AF10"], true, []],
+    ["LAX", "ACTIVE", null, [], true, []],
+    ["MSP", "SEASONAL", null, [], true, []],
+    ["MIA", "ACTIVE", null, [], true, []],
+    ["MCO", "ACTIVE", null, [], true, []],
+    ["ORD", "ACTIVE", null, [], true, []],
+    ["PHX", "ACTIVE", null, [], true, []],
+    ["RDU", "ACTIVE", 5, [], true, []],
+    ["SFO", "ACTIVE", 14, [], true, []],
+    ["SEA", "ACTIVE", 5, [], true, []],
+    ["IAD", "ACTIVE", null, [], true, []],
+    ["YUL", "ACTIVE", null, ["AF348","AF349"], true, []],
+    ["YOW", "ACTIVE", 5, [], true, []],
+    ["YQB", "SEASONAL", 3, [], true, []],
+    ["YYZ", "ACTIVE", null, [], true, []],
+    ["YVR", "ACTIVE", 5, [], true, []],
+    ["MEX", "ACTIVE", null, [], true, []],
+    ["SJO", "ACTIVE", 5, [], true, []],
+    ["PUJ", "SEASONAL", null, [], true, []],
+    ["EZE", "ACTIVE", 9, ["AF468","AF556"], true, []],
+    ["GIG", "ACTIVE", 10, ["AF442","AF512"], true, []],
+    ["FOR", "ACTIVE", 4, [], true, []],
+    ["SSA", "ACTIVE", 3, [], true, []],
+    ["GRU", "ACTIVE", null, [], true, []],
+    ["SCL", "ACTIVE", 7, ["AF528","AF531"], true, []],
+    ["BOG", "ACTIVE", null, [], true, []],
+    ["PTY", "ACTIVE", null, [], true, []],
+    ["LIM", "ACTIVE", 10, ["AF504","AF505"], true, []],
+    ["CAY", "ACTIVE", null, [], true, []],
+    ["PPT", "ACTIVE", 6, [], false, ["LAX"]],
+    ["PEK", "ACTIVE", null, [], true, []],
+    ["PVG", "ACTIVE", null, [], true, []],
+    ["HKG", "ACTIVE", null, [], true, []],
+    ["HND", "ACTIVE", null, [], true, []],
+    ["KIX", "ACTIVE", 4, [], true, []],
+    ["ICN", "ACTIVE", null, [], true, []],
+    ["SIN", "ACTIVE", 9, [], true, []],
+    ["BKK", "ACTIVE", 5, [], true, []],
+    ["HKT", "SEASONAL", null, [], true, []],
+    ["SGN", "ACTIVE", null, [], true, []],
+    ["DEL", "ACTIVE", 7, ["AF283","AF284"], true, []],
+    ["BOM", "ACTIVE", 7, [], true, []],
+    ["BLR", "ACTIVE", 5, [], true, []],
+    ["MLE", "SEASONAL", null, [], true, []],
+    ["DXB", null, null, [], true, []],
+    ["RUH", null, null, [], true, []],
+    ["TLV", null, null, [], true, []],
+    ["BEY", null, null, [], true, []],
+    ["ABJ", "ACTIVE", null, ["AF705","AF706"], true, []],
+    ["ABV", "ACTIVE", 3, [], true, []],
+    ["JNB", "ACTIVE", 7, [], true, []],
+    ["NBO", "ACTIVE", null, [], true, []],
+    ["JRO", "ACTIVE", 3, [], false, ["ZNZ"]],
+    ["ZNZ", "ACTIVE", 3, [], false, ["JRO"]],
+    ["BZV", "ACTIVE", 4, [], false, ["FIH","PNR"]],
+    ["FIH", "ACTIVE", 4, [], false, ["BZV"]],
+    ["PNR", "ACTIVE", 3, [], false, ["BZV"]],
+    ["DLA", "ACTIVE", 3, [], false, ["SSG"]],
+    ["NSI", "ACTIVE", 3, [], false, ["NDJ"]],
+    ["NDJ", "ACTIVE", 3, [], false, ["NSI"]],
+    ["SSG", "ACTIVE", 3, [], false, ["DLA"]],
+    ["COO", "ACTIVE", 5, [], true, []],
+    ["LBV", "ACTIVE", 5, [], true, []],
+    ["LFW", "ACTIVE", 4, [], true, []],
+    ["RUN", "ACTIVE", 11, [], true, []],
+    ["PTP", "ACTIVE", 11, [], true, []],
+    ["FDF", "ACTIVE", 10, [], true, []],
+  ];
+
+  routeSpecs.forEach(([iata, status, frequency, flightNumbers, nonstop, stops]) => {
+    const airport = window.AIRPORT_MASTER[iata];
+    if (!airport) throw new Error(`AF route airport missing from AIRPORT_MASTER: ${iata}`);
+
+    window.AIRLINE_DATA.AF.push({
+      iata,
+      ...airport,
+      frequency,
+      frequencyType:"weekly",
+      lastUpdated:"2026-09",
+      flightNumbers,
+      origin:"CDG",
+      airline:"AF",
+      alliance:"SkyTeam",
+      status,
+      nonstop,
+      stops,
+    });
   });
 })();
