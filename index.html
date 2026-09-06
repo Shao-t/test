@@ -2436,6 +2436,7 @@ const HUB_COORDS = {
   FOC: [25.9352, 119.6630],
   HGH: [30.2295, 120.4344],
   HKG: [22.3080, 113.9185],
+  CDG: [49.0097, 2.5479],
 };
 const HUB_LABELS = {
   IST: "IST 伊斯坦堡",
@@ -2470,7 +2471,7 @@ const HUB_LABELS = {
   BOTH: "松山／桃園雙樞紐",
 };
 // 所有航空公司代碼統一在此維護，新增/移除航空公司只需改這裡
-const AIRLINE_IDS = ["JX","BR","CI","CX","MF","MU","TK","GK","EY","IT","KE"];
+const AIRLINE_IDS = ["JX","BR","CI","CX","MF","MU","TK","GK","EY","IT","KE","AF"];
 const AIRLINE_META_INFO = window.AIRLINE_META || {};
 const AIRLINES = Object.fromEntries(AIRLINE_IDS.map(id => [id, AIRLINE_DATA[id] || []]));
 
@@ -2809,6 +2810,8 @@ window.addEventListener("DOMContentLoaded", () => {
     .bindTooltip("FUK 福岡", { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["CI_RMQ"] = L.circleMarker(HUB_COORDS.RMQ, { radius:6, color:"#003087", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
     .bindTooltip("RMQ 台中", { permanent:true, direction:"right", offset:[7,0] });
+  hubMarkers["AF_CDG"] = L.circleMarker(HUB_COORDS.CDG, { radius:8, color:"#002157", fillColor:"#002157", fillOpacity:1, weight:2, interactive:false })
+    .bindTooltip("CDG 巴黎", { permanent:true, direction:"right", offset:[9,0] });
 
   if (!AIRLINES[activeAirline]) activeAirline = "JX";
   resetRouteFilters({ skipApply: true });
