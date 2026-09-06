@@ -1387,6 +1387,26 @@
     }
     .ticket-edit-menu button:hover { background: rgba(240,194,82,.12); }
     .ticket-edit-menu button + button { border-top: 1px solid rgba(255,255,255,.08); }
+    .ticket-checkbox {
+      position: absolute; top: 12px; left: 12px; width: 22px; height: 22px; border-radius: 7px;
+      border: 2px solid rgba(255,255,255,.3); background: rgba(0,0,0,.2); display: none; z-index: 6; cursor: pointer;
+    }
+    #flight-log-list.select-mode .ticket-checkbox { display: block; }
+    #flight-log-list.select-mode .ticket-edit-btn { display: none; }
+    #flight-log-list.select-mode .ticket-card { padding-left: 44px; }
+    .ticket-card.selected { outline: 2px solid #f0c252; }
+    .ticket-card.selected .ticket-checkbox { background: #f0c252; border-color: #f0c252; }
+    #flight-log-select-toggle.active { background: #f0c252; color: #1a1206; }
+    .flight-log-merge-bar {
+      display: none; position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
+      align-items: center; gap: 10px; background: rgba(8,15,26,.96); border: 1px solid rgba(240,194,82,.4);
+      border-radius: 999px; padding: 8px 8px 8px 16px; box-shadow: 0 10px 26px rgba(0,0,0,.4); z-index: 21; white-space: nowrap;
+    }
+    .flight-log-merge-bar.show { display: flex; }
+    .flight-log-merge-bar span { font-size: 12px; color: var(--deck-ink); font-weight: 600; }
+    .flight-log-merge-bar button { border: 0; border-radius: 999px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .flight-log-merge-bar .merge-confirm { background: #f0c252; color: #1a1206; }
+    .flight-log-merge-bar .merge-cancel { background: rgba(255,255,255,.1); color: rgba(235,241,249,.75); }
     .flight-log-fab {
       position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
       background: #f0c252; color: #1a1206; border: none; font-size: 24px; font-weight: 700;
@@ -1696,6 +1716,25 @@
     </div>
   </div>
 
+  <div class="flight-log-sheet-backdrop" id="edit-trip-sheet" onclick="if(event.target===this) closeEditTripSheet()">
+    <div class="flight-log-sheet" onclick="event.stopPropagation()">
+      <div class="flight-log-sheet-header">
+        <h3>編輯行程</h3>
+        <button class="flight-log-sheet-close" type="button" onclick="closeEditTripSheet()" aria-label="關閉編輯行程">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div id="et-legs"></div>
+      <div class="flight-log-field">
+        <label>備註（選填，套用到整趟行程）</label>
+        <textarea id="et-note" rows="2" placeholder="例如：多城市自由行..."></textarea>
+      </div>
+      <button class="flight-log-sheet-submit" type="button" onclick="submitEditTripSheet()">更新行程</button>
+      <button class="flight-log-sheet-delete" type="button" onclick="deleteTripFromSheet()">刪除整趟行程</button>
+      <div class="flight-log-sheet-msg" id="et-msg"></div>
+    </div>
+  </div>
+
   <div id="achievement-gallery-overlay" aria-hidden="true" onclick="handleAchievementGalleryBackdrop(event)">
     <section class="achievement-gallery-panel" role="dialog" aria-modal="true"
       aria-labelledby="achievement-gallery-title" aria-describedby="achievement-gallery-summary">
@@ -1733,6 +1772,9 @@
         <div style="padding:18px 24px 90px">
           <div class="flight-log-toolbar">
             <div class="flight-log-year-filter" id="flight-log-year-filter"></div>
+            <button class="flight-log-map-toggle" id="flight-log-select-toggle" type="button" onclick="toggleFlightLogSelectMode()">
+              <span id="flight-log-select-toggle-label">選取</span>
+            </button>
             <button class="flight-log-map-toggle" id="flight-log-map-toggle" type="button" onclick="toggleMyFlightsOnMap()">
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5c-2.5 0-4.5 2-4.5 4.5 0 3.4 4.5 8.5 4.5 8.5s4.5-5.1 4.5-8.5c0-2.5-2-4.5-4.5-4.5Z" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="6" r="1.6" stroke="currentColor" stroke-width="1.1"/></svg>
               <span id="flight-log-map-toggle-label">在地圖上顯示</span>
@@ -1751,6 +1793,11 @@
           <div class="flight-log-empty" id="flight-log-empty" style="display:none">
             還沒有任何飛行紀錄。在地圖上點機場選「搭乘過」，或按右下角 + 手動新增。
           </div>
+        </div>
+        <div class="flight-log-merge-bar" id="flight-log-merge-bar">
+          <span id="flight-log-merge-count">已選 0 筆</span>
+          <button type="button" class="merge-confirm" onclick="mergeSelectedFlightLogs()">合併為同一趟</button>
+          <button type="button" class="merge-cancel" onclick="toggleFlightLogSelectMode()">取消</button>
         </div>
         <button class="flight-log-fab" onclick="openAddFlightSheet()" aria-label="新增飛行紀錄">+</button>
       </div>
@@ -3732,6 +3779,9 @@ function airportLabel(iata) {
 
 let flightLogYearFilter = 'all';
 let flightLogRouteFilter = null; // 從地圖點擊某條航線時，暫存 {dep, arr} 只顯示該航線紀錄
+let flightLogSelectMode = false; // 是否處於「選取多筆紀錄合併為同一趟」模式
+let flightLogSelectedKeys = new Set(); // 選取中的卡片 key（＝該卡片第一段紀錄的 id）
+let flightLogCardLegMap = {}; // 卡片 key → 該卡片包含的所有 flight_logs id（每次 renderFlightLogPanel 重建）
 
 function flightLogYears() {
   const years = new Set();
@@ -3813,12 +3863,31 @@ function renderFlightLogPanel() {
         : flightLogsCache.filter(r => (r.flight_date || '').slice(0, 4) === flightLogYearFilter));
 
   const rendered = new Set();
-  const trips = []; // 先把 rows 配對成「行程」清單（去回程合併、單程各自一筆），共用於統計與渲染
+  const trips = []; // 先把 rows 配對成「行程」清單（多段/去回程合併、單程各自一筆），共用於統計與渲染
+  flightLogCardLegMap = {};
+
+  // Pass 1：依 trip_id 分組，支援 2 段以上的多城市行程
+  const tripGroups = new Map();
+  rows.forEach(r => {
+    if (!r.trip_id) return;
+    if (!tripGroups.has(r.trip_id)) tripGroups.set(r.trip_id, []);
+    tripGroups.get(r.trip_id).push(r);
+  });
+  tripGroups.forEach(groupRows => {
+    if (groupRows.length < 2) return; // 孤兒 trip_id（例如另一段被刪了）落回單程處理
+    groupRows.forEach(r => rendered.add(r.id));
+    const legs = groupRows.slice().sort((a, b) =>
+      a.flight_date !== b.flight_date ? a.flight_date.localeCompare(b.flight_date) : (a.created_at || '').localeCompare(b.created_at || ''));
+    const crossYear = legs[0].flight_date.slice(0, 4) !== legs[legs.length - 1].flight_date.slice(0, 4);
+    trips.push({ anchorDate: legs[0].flight_date, legs, crossYear });
+  });
+
+  // Pass 2：剩下的沿用原本去回程配對（paired_log_id）或單程
   rows.forEach(r => {
     if (rendered.has(r.id)) return;
     rendered.add(r.id);
     const pair = r.paired_log_id ? flightLogsCache.find(x => x.id === r.paired_log_id) : null;
-    if (pair) {
+    if (pair && !rendered.has(pair.id)) {
       rendered.add(pair.id);
       // 判斷去程/回程：先比日期，日期相同（同天來回）時改比 created_at（先建立的一筆＝去程），
       // 避免日期打平時陣列順序（依 created_at desc 抓資料）把回程誤判成去程。
@@ -3829,11 +3898,12 @@ function renderFlightLogPanel() {
       // 去回程跨年時（例如去程 2023/12/30、回程 2024/1/5），篩選其中一個年份仍會完整顯示這趟行程，
       // 用 crossYear 標記讓卡片加註提示，避免使用者誤以為篩選功能出錯。
       const crossYear = outbound.flight_date.slice(0, 4) !== inbound.flight_date.slice(0, 4);
-      trips.push({ anchorDate: outbound.flight_date, outbound, inbound, crossYear });
+      trips.push({ anchorDate: outbound.flight_date, legs: [outbound, inbound], crossYear });
     } else {
-      trips.push({ anchorDate: r.flight_date, outbound: r, inbound: null });
+      trips.push({ anchorDate: r.flight_date, legs: [r], crossYear: false });
     }
   });
+  trips.forEach(t => { flightLogCardLegMap[t.legs[0].id] = t.legs.map(l => l.id); });
   trips.sort((a, b) => b.anchorDate.localeCompare(a.anchorDate));
 
   const totalKm = rows.reduce((sum, r) => sum + (r.distance_km || 0), 0);
@@ -3845,8 +3915,8 @@ function renderFlightLogPanel() {
     if (c2) countries.add(c2);
   });
   const totalDays = trips.reduce((sum, t) => {
-    if (!t.inbound) return sum + 1;
-    const span = Math.round((new Date(t.inbound.flight_date) - new Date(t.outbound.flight_date)) / 86400000) + 1;
+    if (t.legs.length === 1) return sum + 1;
+    const span = Math.round((new Date(t.legs[t.legs.length - 1].flight_date) - new Date(t.legs[0].flight_date)) / 86400000) + 1;
     return sum + Math.max(span, 1);
   }, 0);
   document.getElementById('fl-stat-km').textContent = totalKm.toLocaleString();
@@ -3878,6 +3948,7 @@ function renderFlightLogPanel() {
   });
 
   const visibleGroups = groups.slice(0, flightLogVisibleGroups);
+  listEl.classList.toggle('select-mode', flightLogSelectMode);
   listEl.innerHTML = visibleGroups.map((g, i) => renderTimelineGroup(g, i === 0)).join('');
   if (moreBtn) moreBtn.style.display = groups.length > visibleGroups.length ? 'block' : 'none';
 }
@@ -3893,7 +3964,7 @@ function renderTimelineGroup(g, isLatest) {
   const d = new Date(g.date + 'T00:00:00');
   const md = `${d.getMonth() + 1}/${d.getDate()}`;
   const weekday = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'][d.getDay()];
-  const cardsHtml = g.trips.map(t => renderTicketCard(t.outbound, t.inbound, t.crossYear)).join('');
+  const cardsHtml = g.trips.map(t => renderTicketCard(t.legs, t.crossYear)).join('');
   return `
     <div class="timeline-group">
       <div class="timeline-rail">
@@ -3928,27 +3999,27 @@ document.addEventListener('click', () => {
   document.querySelectorAll('.ticket-edit-menu.show').forEach(el => el.classList.remove('show'));
 });
 
-function renderTicketCard(outbound, inbound, crossYear) {
-  const isRoundTrip = !!inbound;
-  const tripDays = isRoundTrip
-    ? Math.max(Math.round((new Date(inbound.flight_date) - new Date(outbound.flight_date)) / 86400000) + 1, 1)
+function renderTicketCard(legs, crossYear) {
+  const isMultiLeg = legs.length > 1;
+  const isSimpleRoundTrip = legs.length === 2 && legs[0].dep_iata === legs[1].arr_iata && legs[0].arr_iata === legs[1].dep_iata;
+  const first = legs[0];
+  const last = legs[legs.length - 1];
+  const tripDays = isMultiLeg
+    ? Math.max(Math.round((new Date(last.flight_date) - new Date(first.flight_date)) / 86400000) + 1, 1)
     : null;
-  const dateRangeText = isRoundTrip
-    ? `${outbound.flight_date} — ${shortDate(inbound.flight_date)}（${tripDays} 天）`
-    : outbound.flight_date;
+  const dateRangeText = isMultiLeg
+    ? `${first.flight_date} — ${shortDate(last.flight_date)}（${tripDays} 天）`
+    : first.flight_date;
 
-  const legs = isRoundTrip
-    ? [['去程', outbound], ['回程', inbound]]
-    : [['單程', outbound]];
-
-  const legRowsHtml = legs.map(([label, r]) => {
+  const legLabels = isSimpleRoundTrip ? ['去程', '回程'] : (isMultiLeg ? legs.map((_, i) => `第${i + 1}段`) : ['單程']);
+  const legRowsHtml = legs.map((r, i) => {
     const meta = window.AIRLINE_META?.[r.airline_id];
     const airlineName = meta?.commercialName || meta?.fullName || meta?.shortName || '';
     const airlineColor = meta?.color || '#f0c252';
     return `
     <div class="ticket-leg-block">
       <div class="ticket-leg-row">
-        <span class="ticket-leg-label">${label}</span>
+        <span class="ticket-leg-label">${legLabels[i]}</span>
         <span class="ticket-leg-date">${shortDate(r.flight_date)}</span>
         <span class="ticket-leg-route">${r.dep_iata} → ${r.arr_iata}</span>
         <span class="ticket-leg-km">${r.distance_km ? r.distance_km.toLocaleString() + ' km' : ''}</span>
@@ -3957,25 +4028,30 @@ function renderTicketCard(outbound, inbound, crossYear) {
     </div>
   `;
   }).join('');
-  const noteHtml = outbound.note || inbound?.note
-    ? `<div class="ticket-note">${[outbound.note, inbound?.note].filter(Boolean).map(escHtml).join(' / ')}</div>`
+  const noteHtml = legs.some(r => r.note)
+    ? `<div class="ticket-note">${legs.map(r => r.note).filter(Boolean).map(escHtml).join(' / ')}</div>`
     : '';
 
-  const editBtnOnclick = `editFlightLog('${outbound.id}')`;
+  const badgeLabel = isSimpleRoundTrip ? '往返' : (isMultiLeg ? '多段行程' : '單程');
+  const headerArrIata = isSimpleRoundTrip ? first.arr_iata : last.arr_iata;
+  const cardKey = first.id;
+  const isSelected = flightLogSelectMode && flightLogSelectedKeys.has(cardKey);
+  const editBtnOnclick = `editFlightLog('${first.id}')`;
 
   return `
-    <div class="ticket-card">
-      <div class="ticket-badge">${isRoundTrip ? '往返' : '單程'}${crossYear ? '<span class="ticket-badge-cross-year">跨年</span>' : ''}</div>
+    <div class="ticket-card${isSelected ? ' selected' : ''}" data-card-key="${cardKey}">
+      <div class="ticket-checkbox" onclick="toggleCardSelection(event, '${cardKey}')" aria-label="選取這張卡片"></div>
+      <div class="ticket-badge">${badgeLabel}${crossYear ? '<span class="ticket-badge-cross-year">跨年</span>' : ''}</div>
       <div class="ticket-daterange">${dateRangeText}</div>
       <div class="ticket-route">
         <div class="ticket-endpoint">
-          <div class="ticket-iata">${outbound.dep_iata}</div>
-          <div class="ticket-city">${cityOf(outbound.dep_iata)}</div>
+          <div class="ticket-iata">${first.dep_iata}</div>
+          <div class="ticket-city">${cityOf(first.dep_iata)}</div>
         </div>
         <div class="ticket-line"><span class="ticket-plane">✈</span></div>
         <div class="ticket-endpoint">
-          <div class="ticket-iata">${outbound.arr_iata}</div>
-          <div class="ticket-city">${cityOf(outbound.arr_iata)}</div>
+          <div class="ticket-iata">${headerArrIata}</div>
+          <div class="ticket-city">${cityOf(headerArrIata)}</div>
         </div>
       </div>
       <div class="ticket-divider"></div>
@@ -3987,6 +4063,52 @@ function renderTicketCard(outbound, inbound, crossYear) {
     </div>
   `;
 }
+
+function toggleFlightLogSelectMode() {
+  flightLogSelectMode = !flightLogSelectMode;
+  flightLogSelectedKeys.clear();
+  document.getElementById('flight-log-select-toggle')?.classList.toggle('active', flightLogSelectMode);
+  const label = document.getElementById('flight-log-select-toggle-label');
+  if (label) label.textContent = flightLogSelectMode ? '取消選取' : '選取';
+  renderFlightLogPanel();
+  updateFlightLogMergeBar();
+}
+
+function toggleCardSelection(event, cardKey) {
+  event.stopPropagation();
+  if (!flightLogSelectMode) return;
+  if (flightLogSelectedKeys.has(cardKey)) flightLogSelectedKeys.delete(cardKey);
+  else flightLogSelectedKeys.add(cardKey);
+  document.querySelector(`.ticket-card[data-card-key="${cardKey}"]`)?.classList.toggle('selected', flightLogSelectedKeys.has(cardKey));
+  updateFlightLogMergeBar();
+}
+
+function updateFlightLogMergeBar() {
+  const bar = document.getElementById('flight-log-merge-bar');
+  const countEl = document.getElementById('flight-log-merge-count');
+  if (!bar) return;
+  const count = flightLogSelectedKeys.size;
+  bar.classList.toggle('show', flightLogSelectMode && count > 0);
+  if (countEl) countEl.textContent = `已選 ${count} 筆`;
+}
+
+async function mergeSelectedFlightLogs() {
+  const keys = [...flightLogSelectedKeys];
+  if (keys.length < 2) return;
+  const allIds = keys.flatMap(k => flightLogCardLegMap[k] || [k]);
+  const rows = allIds.map(id => flightLogsCache.find(r => r.id === id)).filter(Boolean);
+  const existingTripId = rows.find(r => r.trip_id)?.trip_id;
+  const tripId = existingTripId || (window.crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+  try {
+    const { error } = await supabaseClient.from('flight_logs').update({ trip_id: tripId }).in('id', allIds);
+    if (error) throw error;
+    flightLogsCache = await fetchFlightLogs();
+    toggleFlightLogSelectMode(); // 合併完自動退出選取模式並重繪
+  } catch (error) {
+    console.warn('Merge flight logs failed.', error);
+  }
+}
+
 
 async function maybePairFlightLog(newRow) {
   if (!newRow) return;
@@ -4235,20 +4357,32 @@ function openAddFlightSheet() {
   document.getElementById('add-flight-sheet').classList.add('show');
 }
 
+function getLegGroupForRow(row) {
+  if (row.trip_id) {
+    const group = flightLogsCache.filter(r => r.trip_id === row.trip_id);
+    if (group.length >= 2) {
+      return group.slice().sort((a, b) =>
+        a.flight_date !== b.flight_date ? a.flight_date.localeCompare(b.flight_date) : (a.created_at || '').localeCompare(b.created_at || ''));
+    }
+  }
+  const pair = row.paired_log_id ? flightLogsCache.find(r => r.id === row.paired_log_id) : null;
+  if (pair) {
+    const rowIsEarlier = row.flight_date !== pair.flight_date
+      ? row.flight_date < pair.flight_date
+      : row.created_at <= pair.created_at;
+    return rowIsEarlier ? [row, pair] : [pair, row];
+  }
+  return [row];
+}
+
 function editFlightLog(id) {
   const row = flightLogsCache.find(r => r.id === id);
   if (!row) return;
-  const pairedRow = row.paired_log_id ? flightLogsCache.find(r => r.id === row.paired_log_id) : null;
+  const legs = getLegGroupForRow(row);
+  if (legs.length > 2) { openEditTripSheet(legs); return; }
 
-  // 判斷去程／回程：日期早的為去程，日期相同時以 created_at 較早者為去程（與卡片顯示邏輯一致）
-  let outboundRow = row, inboundRow = pairedRow;
-  if (pairedRow) {
-    const rowIsEarlier = row.flight_date !== pairedRow.flight_date
-      ? row.flight_date < pairedRow.flight_date
-      : row.created_at <= pairedRow.created_at;
-    outboundRow = rowIsEarlier ? row : pairedRow;
-    inboundRow = rowIsEarlier ? pairedRow : row;
-  }
+  const outboundRow = legs[0];
+  const inboundRow = legs[1] || null;
 
   editingFlightLogId = outboundRow.id;
   editingPairedLogId = inboundRow ? inboundRow.id : null;
@@ -4279,6 +4413,80 @@ function editFlightLog(id) {
   document.getElementById('af-msg').textContent = '';
   document.getElementById('af-delete-btn').style.display = 'block';
   document.getElementById('add-flight-sheet').classList.add('show');
+}
+
+let editingTripLegs = []; // 目前在「編輯行程」表單中編輯的多段（3 段以上）紀錄
+
+function openEditTripSheet(legs) {
+  editingTripLegs = legs;
+  const container = document.getElementById('et-legs');
+  container.innerHTML = legs.map((leg, i) => `
+    <div class="flight-log-field-row">
+      <div class="flight-log-field">
+        <label>第${i + 1}段 · ${leg.dep_iata} → ${leg.arr_iata} · 航班號（選填）</label>
+        <input class="et-flightno" data-leg-id="${leg.id}" value="${leg.flight_no ? escHtml(leg.flight_no) : ''}" placeholder="MU5098">
+      </div>
+      <div class="flight-log-field">
+        <label>日期</label>
+        <input type="date" class="et-date" data-leg-id="${leg.id}" value="${leg.flight_date || ''}">
+      </div>
+    </div>
+    <div class="flight-log-field">
+      <label>第${i + 1}段航空公司（選填）</label>
+      <select class="et-airline" data-leg-id="${leg.id}"></select>
+    </div>
+  `).join('');
+  legs.forEach(leg => {
+    const sel = container.querySelector(`.et-airline[data-leg-id="${leg.id}"]`);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">未指定</option>' +
+      AIRLINE_IDS.map(aid => `<option value="${aid}">${escHtml(airlineCommercialName(aid))}</option>`).join('');
+    sel.value = leg.airline_id || '';
+  });
+  document.getElementById('et-note').value = legs.map(l => l.note).find(Boolean) || '';
+  document.getElementById('et-msg').textContent = '';
+  document.getElementById('edit-trip-sheet').classList.add('show');
+}
+
+function closeEditTripSheet() {
+  editingTripLegs = [];
+  document.getElementById('edit-trip-sheet').classList.remove('show');
+}
+
+async function submitEditTripSheet() {
+  const msgEl = document.getElementById('et-msg');
+  const note = document.getElementById('et-note').value.trim();
+  const updates = editingTripLegs.map(leg => ({
+    id: leg.id,
+    flight_no: document.querySelector(`.et-flightno[data-leg-id="${leg.id}"]`)?.value.trim() || '',
+    flight_date: document.querySelector(`.et-date[data-leg-id="${leg.id}"]`)?.value || '',
+    airline_id: document.querySelector(`.et-airline[data-leg-id="${leg.id}"]`)?.value || ''
+  }));
+  if (updates.some(u => !u.flight_date)) {
+    msgEl.textContent = '每一段都要選日期'; msgEl.style.color = '#ef4444'; return;
+  }
+  msgEl.textContent = '更新中...'; msgEl.style.color = 'rgba(235,241,249,.6)';
+  try {
+    for (const u of updates) {
+      const { error } = await supabaseClient.from('flight_logs')
+        .update({ flight_no: u.flight_no || null, flight_date: u.flight_date, airline_id: u.airline_id || null, note: note || null })
+        .eq('id', u.id);
+      if (error) throw error;
+    }
+    closeEditTripSheet();
+    flightLogsCache = await fetchFlightLogs();
+    renderFlightLogPanel();
+  } catch (error) {
+    msgEl.textContent = '更新失敗，請稍後再試'; msgEl.style.color = '#ef4444';
+  }
+}
+
+async function deleteTripFromSheet() {
+  if (!editingTripLegs.length) return;
+  if (!window.confirm(`確定要刪除整趟行程（共 ${editingTripLegs.length} 段）嗎？`)) return;
+  const ids = editingTripLegs.map(l => l.id);
+  closeEditTripSheet();
+  for (const id of ids) await deleteFlightLog(id);
 }
 
 function closeAddFlightSheet() {
