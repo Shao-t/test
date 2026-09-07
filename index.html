@@ -2167,6 +2167,18 @@ function routeRows(d, id) {
       ["開航日期", d.effectiveDate || "待公布"]
     );
   }
+
+  if (!hasStopPattern) {
+    const flightNos = patterns[0].flightNumbers || [];
+    rows.push(["航班", flightNos.length ? flightNos.join("、") : "NIL"]);
+  }
+  const freqUnit = d.frequencyType === "weekly" ? "週" : (d.frequencyType || "");
+  rows.push(
+    ["每週班次", d.frequency != null ? `${d.frequency} 班/${freqUnit || "週"}` : "NIL"],
+    ["機場全名", d.airportName || "NIL"],
+    ["國家",     d.country || "NIL"],
+    ["所屬聯盟", meta.alliance || "NIL"],
+  );
   return rows;
 }
 function routePopupHtml(d, id) {
