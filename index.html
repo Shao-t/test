@@ -3661,12 +3661,18 @@ function getGlobalSearchHits(value) {
       const iata = String(d.iata || "").toLowerCase();
       const city = String(d.city || "").toLowerCase();
       const airportName = String(d.airportName || "").toLowerCase();
-      if (iata.includes(q) || city.includes(q) || airportName.includes(q)) {
-        rows.push({ id, d, exact: iata === q ? 0 : 1 });
+      const iataHit = iata.includes(q);
+      const cityHit = city.includes(q);
+      const airportNameHit = airportName.includes(q);
+      if (iataHit || cityHit || airportNameHit) {
+        // tier 0: 命中 IATA 或城市名；tier 1: 只命中機場全名（排到最後）
+        const tier = (iataHit || cityHit) ? 0 : 1;
+        rows.push({ id, d, exact: iata === q ? 0 : 1, tier });
       }
     });
   });
   return rows.sort((a, b) =>
+    a.tier - b.tier ||
     a.exact - b.exact ||
     a.d.iata.localeCompare(b.d.iata) ||
     AIRLINE_IDS.indexOf(a.id) - AIRLINE_IDS.indexOf(b.id) ||
@@ -4209,8 +4215,10 @@ function buildMyFlightsLayer(rows) {
   rows.forEach(r => {
     if (!r.dep_iata || !r.arr_iata) return;
     const key = [r.dep_iata, r.arr_iata].sort().join('-');
-    if (!segments.has(key)) segments.set(key, { dep: r.dep_iata, arr: r.arr_iata, count: 0 });
-    segments.get(key).count += 1;
+    if (!segments.has(key)) segments.set(key, { dep: r.dep_iata, arr: r.arr_iata, count: 0, airlineCounts: {} });
+    const seg = segments.get(key);
+    seg.count += 1;
+    if (r.airline_id) seg.airlineCounts[r.airline_id] = (seg.airlineCounts[r.airline_id] || 0) + 1;
   });
 
   const layerItems = [];
@@ -4223,8 +4231,10 @@ function buildMyFlightsLayer(rows) {
     visitedAirports.add(seg.arr);
     const s = mapCoord(depAirport.coords, seg.dep);
     const e = mapCoord(arrAirport.coords, seg.arr);
+    const topAirlineId = Object.keys(seg.airlineCounts).sort((a, b) => seg.airlineCounts[b] - seg.airlineCounts[a])[0];
+    const routeColor = (topAirlineId && AIRLINE_META_INFO[topAirlineId]?.color) || '#f0c252';
     layerItems.push(L.polyline(bezierArc(s, e), {
-      color: '#f0c252',
+      color: routeColor,
       weight: Math.min(1.6 + seg.count * 0.6, 5),
       opacity: 0.82,
       interactive: true,
