@@ -1859,10 +1859,16 @@ const LEFT_SIDE_AIRPORTS = new Set(["ACC", "MAD", "LHR", "LGW", "DUB", "LIS", "A
 function bezierArc(s, e, preferLeftSide = false) {
   let eLng = e[1];
   if (!preferLeftSide && s[1] > 0 && e[1] < 0) eLng = e[1] + 360;
-  const mLat = (s[0]+e[0])/2 + 6, mLng = (s[1]+eLng)/2;
+  // 扁平版：弧線高度依兩點距離縮放，短程航線弧度輕微，長程航線設上限避免過度隆起。
+  const dist = Math.hypot(e[0] - s[0], eLng - s[1]);
+  const arcHeight = Math.min(Math.max(dist * 0.12, 1.2), 6);
+  const mLat = (s[0]+e[0])/2 + arcHeight, mLng = (s[1]+eLng)/2;
   const pts = [];
-  for (let t = 0; t <= 1; t += 0.02)
+  const STEPS = 50;
+  for (let i = 0; i <= STEPS; i += 1) {
+    const t = i / STEPS;
     pts.push([(1-t)**2*s[0]+2*(1-t)*t*mLat+t**2*e[0], (1-t)**2*s[1]+2*(1-t)*t*mLng+t**2*eLng]);
+  }
   return pts;
 }
 function fmtCoord(c) {
@@ -1967,6 +1973,17 @@ function hideHubWithTransition(marker, ownerId) {
   window.setTimeout(remove, 180);
 }
 
+// 顯示我的足跡時，暫時把目前航空公司的航點/樞紐標記整批移除（不做淡出動畫，避免跟足跡疊圖的顯示時機打架）。
+function hideActiveAirlineLayers() {
+  Object.values(layers[activeAirline] || {}).forEach(route => {
+    if (map.hasLayer(route.hit)) map.removeLayer(route.hit);
+    if (map.hasLayer(route.marker)) map.removeLayer(route.marker);
+  });
+  Object.keys(hubMarkers).forEach(k => {
+    if (k.startsWith(`${activeAirline}_`) && map.hasLayer(hubMarkers[k])) map.removeLayer(hubMarkers[k]);
+  });
+}
+
 function clearSelectedAirport() {
   selectedAirportKey = null;
   if (selectedAirportRing && map && map.hasLayer(selectedAirportRing)) {
@@ -2049,7 +2066,7 @@ function animateRouteDraw(line, d, id) {
       if (token !== routeAnimationToken) return;
       path.style.transition = isDashed
         ? "opacity 420ms ease-out"
-        : "stroke-dashoffset 780ms cubic-bezier(.22,1,.36,1), opacity 180ms ease-out";
+        : "stroke-dashoffset 1300ms cubic-bezier(.22,1,.36,1), opacity 180ms ease-out";
       if (!isDashed) path.style.strokeDashoffset = "0";
       path.style.opacity = "0.65";
     });
@@ -2064,7 +2081,7 @@ function animateRouteDraw(line, d, id) {
     path.classList.remove("route-line-drawing");
     routeDrawTimer = null;
     animateArrivalPulse(d, id);
-  }, isDashed ? 460 : 820);
+  }, isDashed ? 460 : 1340);
 }
 function estimateFlightMinutes(distanceKm) {
   // Very rough block-time estimate: cruise + taxi/takeoff/landing overhead.
@@ -4248,7 +4265,7 @@ function buildMyFlightsLayer(rows) {
     const c = mapCoord(airport.coords, iata);
     layerItems.push(L.circleMarker(c, {
       radius: 4.5,
-      color: '#f0c252',
+      color: '#1a1206',
       weight: 1.5,
       fillColor: '#1a1206',
       fillOpacity: 0.9,
@@ -4268,6 +4285,7 @@ async function toggleMyFlightsOnMap() {
     if (myFlightsLayer) { map.removeLayer(myFlightsLayer); myFlightsLayer = null; }
     myFlightsVisible = false;
     resetMyFlightsMapButton();
+    showAirline(activeAirline);
     return;
   }
 
@@ -4288,6 +4306,7 @@ async function toggleMyFlightsOnMap() {
     window.setTimeout(resetMyFlightsMapButton, 1800);
     return;
   }
+  hideActiveAirlineLayers();
   myFlightsLayer = L.layerGroup(layerItems).addTo(map);
   myFlightsVisible = true;
   btn?.classList.add('active');
