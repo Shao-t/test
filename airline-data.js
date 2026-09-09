@@ -43,6 +43,8 @@ window.AIRLINE_META = {
   TK: { legalName:"土耳其航空", commercialName:"Turkish Airlines", shortName:"土航", fullName:"Turkish Airlines", hub:"IST", alliance:"Star Alliance", color:"#E30A17", colorDim:"rgba(227,10,23,0.35)", hubCoords:[41.2753,28.7519] },
   CX: { legalName:"國泰航空有限公司", commercialName:"Cathay Pacific", shortName:"國泰航空", fullName:"Cathay Pacific", hub:"HKG", alliance:"oneworld", color:"#006564", colorDim:"rgba(0,101,100,0.35)", hubCoords:[22.308,113.9185] },
   AF: { legalName:"法國航空公司", commercialName:"Air France", shortName:"法國航空", fullName:"Air France", hub:"CDG", alliance:"SkyTeam", color:"#002157", colorDim:"rgba(0,33,87,0.35)", hubCoords:[49.0097,2.5479] },
+  KL: { legalName:"荷蘭皇家航空", commercialName:"KLM Royal Dutch Airlines", shortName:"荷蘭航空", fullName:"KLM Royal Dutch Airlines", hub:"AMS", alliance:"SkyTeam", color:"#00A1DE", colorDim:"rgba(0,161,222,0.35)", hubCoords:[52.3086,4.7639] },
+  NH: { legalName:"全日本空輸株式會社", commercialName:"All Nippon Airways", shortName:"全日空", fullName:"All Nippon Airways", hub:"HND", alliance:"Star Alliance", color:"#005BAC", colorDim:"rgba(0,91,172,0.35)", hubCoords:[35.5494,139.7798] },
 };
 
 window.AIRPORT_MASTER = {
@@ -332,6 +334,8 @@ window.AIRPORT_MASTER = {
 window.AIRLINE_DATA = {
 
   AF: [],
+  KL: [],
+  NH: [],
 
   // ─── 星宇航空 JX ──────────────────────────────────────────────────────────
   JX: [
@@ -974,6 +978,83 @@ window.AIRLINE_DATA = {
   });
 })();
 
+// ─── 法國航空 AF：補齊 2026 年現役歐洲／區域客運航點 ──────────────────────
+// 以 AF 官方 2026 航網公告及當期航點清單交叉整理；僅含 AF 實際承運的
+// ACTIVE／SEASONAL 航線。班號與頻率未逐條核實，依資料政策保留空值。
+window.applyAirFranceMinimalRoutes = () => {
+  [
+    ["BEL", "貝倫", "Val de Cans International Airport", "Brazil", 1.3793, -48.4762, "SOUTH_AMERICA"],
+    ["SPU", "斯普利特", "Split Airport", "Croatia", 43.5389, 16.298, "EUROPE"],
+    ["KTT", "基蒂萊", "Kittilä Airport", "Finland", 67.701, 24.8468, "EUROPE"],
+    ["AJA", "阿雅克肖", "Ajaccio Napoleon Bonaparte Airport", "France", 41.9236, 8.8029, "EUROPE"],
+    ["BIA", "巴斯蒂亞", "Bastia – Poretta Airport", "France", 42.5527, 9.4837, "EUROPE"],
+    ["BIQ", "比亞里茲", "Biarritz Pays Basque Airport", "France", 43.4684, -1.5233, "EUROPE"],
+    ["BES", "布雷斯特", "Brest Bretagne Airport", "France", 48.4479, -4.4185, "EUROPE"],
+    ["CFR", "康城", "Caen – Carpiquet Airport", "France", 49.1733, -0.45, "EUROPE"],
+    ["CLY", "卡爾維", "Calvi – Sainte-Catherine Airport", "France", 42.5308, 8.7932, "EUROPE"],
+    ["CFE", "克萊蒙費朗", "Clermont-Ferrand Auvergne Airport", "France", 45.7867, 3.1692, "EUROPE"],
+    ["FSC", "菲加里", "Figari Sud-Corse Airport", "France", 41.5006, 9.0978, "EUROPE"],
+    ["MPL", "蒙彼利埃", "Montpellier–Méditerranée Airport", "France", 43.5762, 3.963, "EUROPE"],
+    ["NTE", "南特", "Nantes Atlantique Airport", "France", 47.1532, -1.6107, "EUROPE"],
+    ["PUF", "波城", "Pau Pyrénées Airport", "France", 43.38, -0.4186, "EUROPE"],
+    ["RNS", "雷恩", "Rennes–Saint-Jacques Airport", "France", 48.0695, -1.7348, "EUROPE"],
+    ["HER", "伊拉克利翁", "Heraklion International Airport", "Greece", 35.3397, 25.1803, "EUROPE"],
+    ["RHO", "羅德島", "Rhodes International Airport", "Greece", 36.4054, 28.0862, "EUROPE"],
+    ["ORK", "科克", "Cork Airport", "Ireland", 51.8413, -8.4911, "EUROPE"],
+    ["CAG", "卡利亞里", "Cagliari Elmas Airport", "Italy", 39.2515, 9.0543, "EUROPE"],
+    ["FLR", "佛羅倫斯", "Florence Airport", "Italy", 43.81, 11.2051, "EUROPE"],
+    ["LIN", "米蘭利納特", "Milan Linate Airport", "Italy", 45.4451, 9.2767, "EUROPE"],
+    ["OLB", "奧爾比亞", "Olbia Costa Smeralda Airport", "Italy", 40.8987, 9.5176, "EUROPE"],
+    ["VRN", "維羅納", "Verona Villafranca Airport", "Italy", 45.3957, 10.8885, "EUROPE"],
+    ["TNR", "安塔那那利佛", "Ivato International Airport", "Madagascar", -18.7969, 47.4788, "AFRICA"],
+    ["RBA", "拉巴特", "Rabat–Salé Airport", "Morocco", 34.0515, -6.7515, "AFRICA"],
+    ["TNG", "丹吉爾", "Tangier Ibn Battouta Airport", "Morocco", 35.7269, -5.9169, "AFRICA"],
+    ["BGO", "卑爾根", "Bergen Airport, Flesland", "Norway", 60.2934, 5.2181, "EUROPE"],
+    ["TOS", "特羅姆瑟", "Tromsø Airport, Langnes", "Norway", 69.6833, 18.9189, "EUROPE"],
+    ["FAO", "法魯", "Faro Airport", "Portugal", 37.0144, -7.9659, "EUROPE"],
+    ["SXM", "荷屬聖馬丁", "Princess Juliana International Airport", "Sint Maarten", 18.041, -63.1089, "NORTH_AMERICA"],
+    ["IBZ", "伊比薩", "Ibiza Airport", "Spain", 38.8729, 1.3731, "EUROPE"],
+    ["TFS", "特內里費南", "Tenerife South Airport", "Spain", 28.0445, -16.5725, "EUROPE"],
+    ["NCL", "紐卡斯爾", "Newcastle International Airport", "UK", 55.0375, -1.6917, "EUROPE"],
+  ].forEach(([iata, city, airportName, country, lat, lon, region]) => {
+    if (!window.AIRPORT_MASTER[iata]) window.AIRPORT_MASTER[iata] = { city, airportName, country, coords:[lat,lon], region };
+  });
+
+  const routeSpecs = [
+    ["CDG", "TIA", "ACTIVE"], ["CDG", "ALG", "ACTIVE"], ["CDG", "ORN", "ACTIVE"], ["CDG", "NBJ", "ACTIVE"], ["CDG", "EVN", "ACTIVE"], ["CDG", "VIE", "ACTIVE"],
+    ["CDG", "BEL", "ACTIVE"], ["CDG", "DBV", "SEASONAL"], ["CDG", "SPU", "SEASONAL"], ["CDG", "ZAG", "ACTIVE"], ["CDG", "PRG", "ACTIVE"], ["CDG", "BLL", "ACTIVE"], ["CDG", "CPH", "ACTIVE"],
+    ["CDG", "JIB", "ACTIVE"], ["CDG", "CAI", "ACTIVE"], ["CDG", "HEL", "ACTIVE"], ["CDG", "KTT", "SEASONAL"], ["CDG", "RVN", "SEASONAL"],
+    ["ORY", "AJA", "ACTIVE"], ["ORY", "BIA", "ACTIVE"], ["ORY", "CLY", "ACTIVE"], ["ORY", "FSC", "ACTIVE"], ["CDG", "BIQ", "ACTIVE"], ["CDG", "BOD", "ACTIVE"], ["CDG", "BES", "ACTIVE"], ["CDG", "CFR", "ACTIVE"], ["CDG", "CFE", "ACTIVE"], ["CDG", "LYS", "ACTIVE"], ["CDG", "MRS", "ACTIVE"], ["CDG", "MPL", "ACTIVE"], ["CDG", "NTE", "ACTIVE"], ["CDG", "NCE", "ACTIVE"], ["CDG", "PUF", "ACTIVE"], ["CDG", "RNS", "ACTIVE"], ["CDG", "TLS", "ACTIVE"],
+    ["CDG", "BER", "ACTIVE"], ["CDG", "DUS", "ACTIVE"], ["CDG", "FRA", "ACTIVE"], ["CDG", "HAM", "ACTIVE"], ["CDG", "HAJ", "ACTIVE"], ["CDG", "MUC", "ACTIVE"], ["CDG", "NUE", "ACTIVE"],
+    ["CDG", "ATH", "ACTIVE"], ["CDG", "HER", "SEASONAL"], ["CDG", "JMK", "SEASONAL"], ["CDG", "RHO", "SEASONAL"], ["CDG", "JTR", "SEASONAL"], ["CDG", "CKY", "ACTIVE"], ["CDG", "BUD", "ACTIVE"], ["CDG", "ORK", "ACTIVE"], ["CDG", "DUB", "ACTIVE"],
+    ["CDG", "BRI", "ACTIVE"], ["CDG", "BLQ", "ACTIVE"], ["CDG", "CAG", "SEASONAL"], ["CDG", "CTA", "ACTIVE"], ["CDG", "FLR", "ACTIVE"], ["CDG", "LIN", "ACTIVE"], ["CDG", "MXP", "ACTIVE"], ["CDG", "NAP", "ACTIVE"], ["CDG", "OLB", "SEASONAL"], ["CDG", "PMO", "ACTIVE"], ["CDG", "FCO", "ACTIVE"], ["CDG", "TRN", "ACTIVE"], ["CDG", "VCE", "ACTIVE"], ["CDG", "VRN", "ACTIVE"],
+    ["CDG", "TNR", "ACTIVE"], ["CDG", "MLA", "ACTIVE"], ["CDG", "NKC", "ACTIVE"], ["CDG", "MRU", "ACTIVE"], ["CDG", "CMN", "ACTIVE"], ["CDG", "RAK", "ACTIVE"], ["CDG", "RBA", "ACTIVE"], ["CDG", "TNG", "ACTIVE"], ["CDG", "AMS", "ACTIVE"], ["CDG", "LOS", "ACTIVE"],
+    ["CDG", "BGO", "ACTIVE"], ["CDG", "OSL", "ACTIVE"], ["CDG", "TOS", "SEASONAL"], ["CDG", "KRK", "ACTIVE"], ["CDG", "WAW", "ACTIVE"], ["CDG", "FAO", "SEASONAL"], ["CDG", "LIS", "ACTIVE"], ["CDG", "OPO", "ACTIVE"], ["CDG", "OTP", "ACTIVE"], ["CDG", "DSS", "ACTIVE"], ["CDG", "SXM", "SEASONAL"], ["CDG", "LJU", "ACTIVE"],
+    ["CDG", "BCN", "ACTIVE"], ["CDG", "BIO", "ACTIVE"], ["CDG", "IBZ", "SEASONAL"], ["CDG", "MAD", "ACTIVE"], ["CDG", "AGP", "ACTIVE"], ["CDG", "PMI", "SEASONAL"], ["CDG", "SVQ", "ACTIVE"], ["CDG", "TFS", "SEASONAL"], ["CDG", "VLC", "ACTIVE"], ["CDG", "GOT", "ACTIVE"], ["CDG", "ARN", "ACTIVE"], ["CDG", "GVA", "ACTIVE"], ["CDG", "ZRH", "ACTIVE"], ["CDG", "TUN", "ACTIVE"], ["CDG", "IST", "ACTIVE"],
+    ["CDG", "BHX", "ACTIVE"], ["CDG", "EDI", "ACTIVE"], ["CDG", "LGW", "ACTIVE"], ["CDG", "LHR", "ACTIVE"], ["CDG", "MAN", "ACTIVE"], ["CDG", "NCL", "ACTIVE"],
+  ];
+
+  routeSpecs.forEach(([origin, iata, status]) => {
+    if (window.AIRLINE_DATA.AF.some(route => route.origin === origin && route.iata === iata)) return;
+    const airport = window.AIRPORT_MASTER[iata];
+    if (!airport) throw new Error(`AF route airport missing from AIRPORT_MASTER: ${iata}`);
+    window.AIRLINE_DATA.AF.push({
+      iata,
+      ...airport,
+      frequency:null,
+      frequencyType:"weekly",
+      lastUpdated:"2026-09",
+      flightNumbers:[],
+      origin,
+      airline:"AF",
+      alliance:"SkyTeam",
+      status,
+      nonstop:true,
+      stops:[],
+    });
+  });
+};
+
 // ─── 國泰航空 CX：香港出發實際承運客運航線 ────────────────────────────────
 // 依 2026-08 官方航點與班表整理；不含純貨運、HK Express 或其他聯營承運航班。
 (() => {
@@ -1523,4 +1604,115 @@ window.AIRLINE_DATA.MF.push(
       stops,
     });
   });
+})();
+
+// AF 補齊區塊須在完整機場主檔與既有 AF 航線載入後執行。
+window.applyAirFranceMinimalRoutes();
+delete window.applyAirFranceMinimalRoutes;
+
+// ─── 荷蘭皇家航空 KL：2026 年 AMS 實際承運客運航網 ─────────────────────────
+// 航點以 KLM 2026 年季節網路及當期航點清單交叉整理；班號與頻率未逐條核實。
+(() => {
+  const airportAdds = [
+    ["AUA","阿魯巴","Queen Beatrix International Airport","Aruba",12.5014,-70.0152,"NORTH_AMERICA"],
+    ["BGI","布里奇敦","Grantley Adams International Airport","Barbados",13.0746,-59.4925,"NORTH_AMERICA"],
+    ["YEG","艾德蒙頓","Edmonton International Airport","Canada",53.3097,-113.58,"NORTH_AMERICA"],
+    ["BON","克拉倫代克","Flamingo International Airport","Caribbean Netherlands",12.131,-68.2685,"NORTH_AMERICA"],
+    ["CTG","卡塔赫納","Rafael Núñez International Airport","Colombia",10.4424,-75.513,"SOUTH_AMERICA"],
+    ["CUR","威廉斯塔德","Curaçao International Airport","Curaçao",12.1889,-68.9598,"NORTH_AMERICA"],
+    ["LCA","拉納卡","Larnaca International Airport","Cyprus",34.8751,33.6249,"EUROPE"],
+    ["AAL","奧爾堡","Aalborg Airport","Denmark",57.0928,9.8492,"EUROPE"],
+    ["GYE","瓜亞基爾","José Joaquín de Olmedo International Airport","Ecuador",-2.1574,-79.8836,"SOUTH_AMERICA"],
+    ["UIO","基多","Mariscal Sucre International Airport","Ecuador",-0.1292,-78.3575,"SOUTH_AMERICA"],
+    ["GEO","喬治敦","Cheddi Jagan International Airport","Guyana",6.4986,-58.2541,"SOUTH_AMERICA"],
+    ["GOA","熱那亞","Genoa Cristoforo Colombo Airport","Italy",44.4133,8.8378,"EUROPE"],
+    ["JER","澤西","Jersey Airport","Jersey",49.2079,-2.1955,"EUROPE"],
+    ["AES","奧勒松","Ålesund Airport, Vigra","Norway",62.5625,6.1197,"EUROPE"],
+    ["KRS","克里斯蒂安桑","Kristiansand Airport, Kjevik","Norway",58.2042,8.0854,"EUROPE"],
+    ["SVG","斯塔萬格","Stavanger Airport, Sola","Norway",58.8767,5.6378,"EUROPE"],
+    ["TRD","特隆赫姆","Trondheim Airport, Værnes","Norway",63.4578,10.924,"EUROPE"],
+    ["GDN","格但斯克","Gdańsk Lech Wałęsa Airport","Poland",54.3776,18.4662,"EUROPE"],
+    ["POZ","波茲南","Poznań–Ławica Airport","Poland",52.421,16.8263,"EUROPE"],
+    ["WRO","弗羅茨瓦夫","Copernicus Airport Wrocław","Poland",51.1027,16.8858,"EUROPE"],
+    ["ALC","阿利坎特","Alicante–Elche Miguel Hernández Airport","Spain",38.2822,-0.5582,"EUROPE"],
+    ["OVD","阿斯圖里亞斯","Asturias Airport","Spain",43.5636,-6.0346,"EUROPE"],
+    ["SCQ","聖地牙哥-德孔波斯特拉","Santiago–Rosalía de Castro Airport","Spain",42.8963,-8.4151,"EUROPE"],
+    ["PBM","帕拉馬里博","Johan Adolf Pengel International Airport","Suriname",5.4528,-55.1878,"SOUTH_AMERICA"],
+    ["LPI","林雪平","Linköping City Airport","Sweden",58.4062,15.6805,"EUROPE"],
+    ["POS","西班牙港","Piarco International Airport","Trinidad and Tobago",10.5954,-61.3372,"NORTH_AMERICA"],
+    ["ABZ","阿伯丁","Aberdeen International Airport","UK",57.2019,-2.1978,"EUROPE"],
+    ["BHD","貝爾法斯特市","George Best Belfast City Airport","UK",54.6181,-5.8725,"EUROPE"],
+    ["BRS","布里斯托","Bristol Airport","UK",51.3827,-2.7191,"EUROPE"],
+    ["CWL","卡地夫","Cardiff Airport","UK",51.3967,-3.3433,"EUROPE"],
+    ["MME","達勒姆","Teesside International Airport","UK",54.5092,-1.4294,"EUROPE"],
+    ["EXT","埃克塞特","Exeter Airport","UK",50.7344,-3.4139,"EUROPE"],
+    ["GLA","格拉斯哥","Glasgow Airport","UK",55.8719,-4.4331,"EUROPE"],
+    ["HUY","亨伯賽德","Humberside Airport","UK",53.5744,-0.3508,"EUROPE"],
+    ["INV","因弗內斯","Inverness Airport","UK",57.5425,-4.0475,"EUROPE"],
+    ["LBA","里茲","Leeds Bradford Airport","UK",53.8659,-1.6606,"EUROPE"],
+    ["LCY","倫敦城市","London City Airport","UK",51.5053,0.0553,"EUROPE"],
+    ["NWI","諾里奇","Norwich Airport","UK",52.6758,1.2828,"EUROPE"],
+    ["SOU","南安普敦","Southampton Airport","UK",50.9503,-1.3568,"EUROPE"],
+    ["AUS","奧斯汀","Austin–Bergstrom International Airport","USA",30.1975,-97.6664,"NORTH_AMERICA"],
+    ["PDX","波特蘭","Portland International Airport","USA",45.5898,-122.5951,"NORTH_AMERICA"],
+    ["SLC","鹽湖城","Salt Lake City International Airport","USA",40.7899,-111.9791,"NORTH_AMERICA"],
+    ["SAN","聖地牙哥","San Diego International Airport","USA",32.7336,-117.1897,"NORTH_AMERICA"],
+  ];
+  airportAdds.forEach(([iata,city,airportName,country,lat,lon,region]) => {
+    if (!window.AIRPORT_MASTER[iata]) window.AIRPORT_MASTER[iata] = { city, airportName, country, coords:[lat,lon], region };
+  });
+
+  const active = `EZE VIE BRU GIG GRU YYC YUL YYZ YVR SCL PEK PVG BOG SJO ZAG LCA PRG AAL BLL CPH GYE UIO HEL BSL BIQ BOD LYS MRS MPL NTE NCE CDG RNS TLS BER BRE DUS FRA HAM HAJ MUC NUE STR ACC ATH GEO HKG BUD BLR HYD BOM DEL DPS CGK ORK DUB TLV BLQ CTA FLR GOA LIN NAP FCO TRN VCE KIX NRT NBO LUX KUL CUN MEX LOS AES BGO KRS OSL SVG TRD PTY LIM MNL GDN KRK POZ WAW WRO LIS OPO OTP KGL BEG SIN SXM LJU CPT JNB ICN ALC BCN BIO MAD AGP VLC PBM GOT LPI ARN GVA ZRH TPE DAR JRO ZNZ BKK POS IST EBB ABZ BHD BHX BRS CWL MME EDI EXT GLA HUY INV LBA LCY LHR MAN NCL NWI SOU ATL AUS BOS ORD IAH LAS LAX MIA MSP JFK PDX SLC SAN SFO IAD`.trim().split(/\s+/);
+  const seasonal = `AUA BGI YEG BON CTG CUR DBV SPU KTT RVN JER CAG IBZ OVD SCQ`.trim().split(/\s+/);
+  const suspended = `DMM RUH DXB`.trim().split(/\s+/);
+  const existing = new Set(window.AIRLINE_DATA.KL.map(route => `${route.origin}:${route.iata}`));
+  const append = (iata, status, nonstop = true, stops = []) => {
+    const key = `AMS:${iata}`;
+    if (existing.has(key)) return;
+    const airport = window.AIRPORT_MASTER[iata];
+    if (!airport) throw new Error(`KL route airport missing from AIRPORT_MASTER: ${iata}`);
+    window.AIRLINE_DATA.KL.push({ iata, ...airport, frequency:null, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:[], origin:"AMS", airline:"KL", alliance:"SkyTeam", status, nonstop, stops });
+    existing.add(key);
+  };
+  active.forEach(iata => append(iata, "ACTIVE", iata !== "TLV", iata === "TLV" ? ["LCA"] : []));
+  seasonal.forEach(iata => append(iata, "SEASONAL"));
+  suspended.forEach(iata => append(iata, "SUSPENDED"));
+})();
+
+// ─── 全日本空輸 NH：2026 年日本出發國際客運航線 ───────────────────────────
+// 依 ANA 2026 冬季國際線班表（2026-08-20）整理；不含聯營與 ANA 集團其他品牌。
+(() => {
+  const airportAdds = [
+    ["VVO","海參崴","Vladivostok International Airport","Russia",43.399,132.148,"NORTHEAST_ASIA"],
+  ];
+  airportAdds.forEach(([iata,city,airportName,country,lat,lon,region]) => {
+    if (!window.AIRPORT_MASTER[iata]) window.AIRPORT_MASTER[iata] = { city, airportName, country, coords:[lat,lon], region };
+  });
+
+  const active = [
+    ["NRT","LAX"], ["NRT","SFO"], ["NRT","ORD"], ["NRT","MEX"], ["NRT","HNL"],
+    ["NRT","PER"], ["NRT","BOM"], ["NRT","BKK"], ["NRT","HAN"], ["NRT","SGN"], ["NRT","KUL"], ["NRT","SIN"], ["NRT","CGK"], ["NRT","MNL"], ["NRT","DLC"], ["NRT","PVG"], ["NRT","HGH"], ["NRT","HKG"],
+    ["HND","LAX"], ["HND","SFO"], ["HND","SEA"], ["HND","IAD"], ["HND","JFK"], ["HND","IAH"], ["HND","ORD"], ["HND","YVR"], ["HND","HNL"],
+    ["HND","LHR"], ["HND","CDG"], ["HND","FRA"], ["HND","MUC"], ["HND","VIE"], ["HND","MXP"], ["HND","ARN"], ["HND","IST"],
+    ["HND","SYD"], ["HND","DEL"], ["HND","BKK"], ["HND","SGN"], ["HND","KUL"], ["HND","SIN"], ["HND","CGK"], ["HND","MNL"],
+    ["HND","PEK"], ["HND","TAO"], ["HND","PVG"], ["HND","SHA"], ["HND","CAN"], ["HND","SZX"], ["HND","HKG"], ["HND","TSA"], ["HND","GMP"],
+    ["KIX","PEK"], ["KIX","PVG"],
+  ];
+  const seasonal = [["NRT","YVR"]];
+  const suspended = [
+    ["NRT","JFK"], ["NRT","SEA"], ["NRT","IAD"], ["NRT","IAH"], ["NRT","DUS"], ["NRT","VVO"], ["NRT","MAA"], ["NRT","KTI"], ["NRT","RGN"], ["NRT","SHE"], ["NRT","TAO"], ["NRT","WUH"], ["NRT","CTU"], ["NRT","XMN"], ["NRT","TPE"],
+    ["KIX","HKG"], ["KIX","DLC"], ["KIX","TAO"], ["KIX","HGH"],
+  ];
+  const existing = new Set(window.AIRLINE_DATA.NH.map(route => `${route.origin}:${route.iata}`));
+  const append = ([origin, iata], status) => {
+    const key = `${origin}:${iata}`;
+    if (existing.has(key)) return;
+    const airport = window.AIRPORT_MASTER[iata];
+    if (!airport) throw new Error(`NH route airport missing from AIRPORT_MASTER: ${iata}`);
+    window.AIRLINE_DATA.NH.push({ iata, ...airport, frequency:null, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:[], origin, airline:"NH", alliance:"Star Alliance", status, nonstop:true, stops:[] });
+    existing.add(key);
+  };
+  active.forEach(route => append(route, "ACTIVE"));
+  seasonal.forEach(route => append(route, "SEASONAL"));
+  suspended.forEach(route => append(route, "SUSPENDED"));
 })();

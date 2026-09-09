@@ -2450,6 +2450,7 @@ const HUB_COORDS = {
   XIY: [34.4471, 108.7516],
   PKX: [39.5098, 116.4105],
   NRT: [35.7720, 140.3929],
+  HND: [35.5494, 139.7798],
   AUH: [24.4330, 54.6511],
   KIX: [34.4347, 135.2440],
   NGO: [34.8584, 136.8054],
@@ -2466,6 +2467,7 @@ const HUB_COORDS = {
   HGH: [30.2295, 120.4344],
   HKG: [22.3080, 113.9185],
   CDG: [49.0097, 2.5479],
+  AMS: [52.3086, 4.7639],
 };
 const HUB_LABELS = {
   IST: "IST 伊斯坦堡",
@@ -2482,6 +2484,7 @@ const HUB_LABELS = {
   XIY: "XIY 西安",
   PKX: "PKX 北京大興",
   NRT: "NRT 成田",
+  HND: "HND 羽田",
   AUH: "AUH 阿布達比",
   KIX: "KIX 大阪關西",
   NGO: "NGO 名古屋",
@@ -2497,10 +2500,11 @@ const HUB_LABELS = {
   FOC: "FOC 福州",
   HGH: "HGH 杭州",
   HKG: "HKG 香港",
+  AMS: "AMS 阿姆斯特丹",
   BOTH: "松山／桃園雙樞紐",
 };
 // 所有航空公司代碼統一在此維護，新增/移除航空公司只需改這裡
-const AIRLINE_IDS = ["JX","BR","CI","CX","MF","MU","TK","GK","EY","IT","KE","AF"];
+const AIRLINE_IDS = ["JX","BR","CI","CX","MF","MU","TK","GK","EY","IT","KE","AF","KL","NH"];
 const AIRLINE_META_INFO = window.AIRLINE_META || {};
 const AIRLINES = Object.fromEntries(AIRLINE_IDS.map(id => [id, AIRLINE_DATA[id] || []]));
 
@@ -2841,6 +2845,14 @@ window.addEventListener("DOMContentLoaded", () => {
     .bindTooltip("RMQ 台中", { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["AF_CDG"] = L.circleMarker(HUB_COORDS.CDG, { radius:8, color:"#002157", fillColor:"#002157", fillOpacity:1, weight:2, interactive:false })
     .bindTooltip("CDG 巴黎", { permanent:true, direction:"right", offset:[9,0] });
+  hubMarkers["KL_AMS"] = L.circleMarker(HUB_COORDS.AMS, { radius:8, color:"#00A1DE", fillColor:"#00A1DE", fillOpacity:1, weight:2, interactive:false })
+    .bindTooltip("AMS 阿姆斯特丹", { permanent:true, direction:"right", offset:[9,0] });
+  hubMarkers["NH_HND"] = L.circleMarker(HUB_COORDS.HND, { radius:8, color:"#005BAC", fillColor:"#005BAC", fillOpacity:1, weight:2, interactive:false })
+    .bindTooltip("HND 羽田", { permanent:true, direction:"right", offset:[9,0] });
+  hubMarkers["NH_NRT"] = L.circleMarker(HUB_COORDS.NRT, { radius:6, color:"#005BAC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
+    .bindTooltip("NRT 成田", { permanent:true, direction:"right", offset:[7,0] });
+  hubMarkers["NH_KIX"] = L.circleMarker(HUB_COORDS.KIX, { radius:6, color:"#005BAC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
+    .bindTooltip("KIX 大阪關西", { permanent:true, direction:"right", offset:[7,0] });
 
   if (!AIRLINES[activeAirline]) activeAirline = "JX";
   resetRouteFilters({ skipApply: true });
@@ -2944,6 +2956,13 @@ function showAirline(id) {
     ["KIX","NGO","FUK"].forEach(o => {
       const hasRoutes = al.some(d => d.origin === o);
       const marker = hubMarkers[`GK_${o}`];
+      if (hasRoutes && marker && !map.hasLayer(marker)) marker.addTo(map);
+    });
+  }
+  if (id === "NH") {
+    ["NRT","KIX"].forEach(o => {
+      const hasRoutes = al.some(d => d.origin === o);
+      const marker = hubMarkers[`NH_${o}`];
       if (hasRoutes && marker && !map.hasLayer(marker)) marker.addTo(map);
     });
   }
