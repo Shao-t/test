@@ -1361,9 +1361,9 @@
     .ticket-plane { background: #1a2230; padding: 0 6px; color: #f0c252; font-size: 15px; }
     .ticket-divider { border-top: 1px dashed rgba(255,255,255,.16); margin: 8px 0; }
     .ticket-leg-row {
-      display: flex; align-items: baseline; gap: 10px; font-size: 12.5px; padding: 4px 0;
+      display: flex; align-items: baseline; gap: 10px; font-size: 12.5px; padding: 3px 0;
     }
-    .ticket-leg-block + .ticket-leg-block .ticket-leg-row { padding-top: 2px; }
+    .ticket-leg-block + .ticket-leg-block .ticket-leg-row { padding-top: 1.5px; }
     .ticket-leg-airline { font-size: 10px; font-weight: 600; margin: 0 0 2px 42px; }
     .ticket-note { font-size: 11px; color: #86868b; margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(0,0,0,0.08); }
     .ticket-leg-label { color: rgba(235,241,249,.5); flex: 0 0 32px; }
@@ -4090,8 +4090,8 @@ function renderTicketCard(legs, crossYear) {
     ? `<div class="ticket-note">${legs.map(r => r.note).filter(Boolean).map(escHtml).join(' / ')}</div>`
     : '';
 
-  const badgeLabel = isSimpleRoundTrip ? '往返' : (isMultiLeg ? '多段行程' : '單程');
-  const headerArrIata = isSimpleRoundTrip ? first.arr_iata : last.arr_iata;
+  const badgeLabel = isSimpleRoundTrip ? '往返' : (isMultiLeg ? '多城市' : '單程');
+  const headerArrIata = first.arr_iata;
   const cardKey = first.id;
   const isSelected = flightLogSelectMode && flightLogSelectedKeys.has(cardKey);
   const editBtnOnclick = `editFlightLog('${first.id}')`;
