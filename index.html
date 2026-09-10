@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="airline-data.js?v=20260816-cathay"></script>
+  <script src="airline-data.js?v=20260910-vietnam-airlines"></script>
   <script>
     // Supabase 專案連線設定（anon public key，可公開放在前端）
     const SUPABASE_URL = "https://zpdsjrfcpkoogfxkawne.supabase.co";
@@ -1376,18 +1376,6 @@
       display: grid; place-items: center;
     }
     .ticket-edit-btn:hover { background: rgba(240,194,82,.18); color: #f0c252; }
-    .ticket-edit-menu {
-      display: none; position: absolute; top: 46px; right: 12px; z-index: 5;
-      background: #1e2734; border: 1px solid rgba(255,255,255,.14); border-radius: 12px;
-      overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.4);
-    }
-    .ticket-edit-menu.show { display: block; }
-    .ticket-edit-menu button {
-      display: block; width: 100%; padding: 10px 16px; background: none; border: 0;
-      color: var(--deck-ink); font-size: 12.5px; text-align: left; cursor: pointer; white-space: nowrap;
-    }
-    .ticket-edit-menu button:hover { background: rgba(240,194,82,.12); }
-    .ticket-edit-menu button + button { border-top: 1px solid rgba(255,255,255,.08); }
     .ticket-checkbox {
       position: absolute; top: 12px; left: 12px; width: 22px; height: 22px; border-radius: 7px;
       border: 2px solid rgba(255,255,255,.3); background: rgba(0,0,0,.2); display: none; z-index: 6; cursor: pointer;
@@ -1884,7 +1872,7 @@ function mapRouteCoord(d, id) {
 
   // 土耳其航空以每條航線的出發地為基準，選擇距離最近的世界地圖副本。
   const meta = AIRLINE_META_INFO[id] || {};
-  const originCoord = HUB_COORDS[d.origin] || meta.hubCoords || HUB_COORDS.IST;
+  const originCoord = HUB_COORDS[d.origin] || AIRPORT_MASTER[d.origin]?.coords || meta.hubCoords || HUB_COORDS.IST;
   const [lat, lng] = d.coords;
   const candidateLngs = [lng - 360, lng, lng + 360];
   const nearestLng = candidateLngs.reduce((nearest, candidate) =>
@@ -2104,9 +2092,6 @@ function formatFlightMinutes(totalMinutes) {
   const minutes = totalMinutes % 60;
   return `${hours} 小時 ${String(minutes).padStart(2, "0")} 分`;
 }
-function estimateFlightTime(distanceKm) {
-  return formatFlightMinutes(estimateFlightMinutes(distanceKm));
-}
 function routeServicePatterns(d) {
   if (Array.isArray(d.servicePatterns) && d.servicePatterns.length) return d.servicePatterns;
   return [{
@@ -2121,7 +2106,7 @@ function airportRouteLabel(iata) {
 }
 function routePatternMetrics(d, id, pattern) {
   const meta = AIRLINE_META_INFO[id] || {};
-  const originCoord = HUB_COORDS[d.origin] || meta.hubCoords || HUB_COORDS.TPE;
+  const originCoord = HUB_COORDS[d.origin] || AIRPORT_MASTER[d.origin]?.coords || meta.hubCoords || HUB_COORDS.TPE;
   const stopCoords = (pattern.stops || [])
     .map(iata => AIRPORT_MASTER[iata]?.coords)
     .filter(Boolean);
@@ -2137,7 +2122,7 @@ function routePatternMetrics(d, id, pattern) {
 }
 function routeRows(d, id) {
   const meta = AIRLINE_META_INFO[id] || {};
-  const hubCoord = HUB_COORDS[d.origin] || meta.hubCoords || HUB_COORDS.TPE;
+  const hubCoord = HUB_COORDS[d.origin] || AIRPORT_MASTER[d.origin]?.coords || meta.hubCoords || HUB_COORDS.TPE;
   const hubLabel = HUB_LABELS[d.origin] || meta.hub || d.origin || "TPE";
   const patterns = routeServicePatterns(d);
   const hasStopPattern = patterns.some(pattern => (pattern.stops || []).length > 0 || pattern.nonstop === false);
@@ -2346,7 +2331,7 @@ function openRouteOverlayPopup(html, latlng) {
 }
 function routePatternMapPoints(d, id, pattern) {
   const meta = AIRLINE_META_INFO[id] || {};
-  const originCoord = HUB_COORDS[d.origin] || meta.hubCoords || HUB_COORDS.TPE;
+  const originCoord = HUB_COORDS[d.origin] || AIRPORT_MASTER[d.origin]?.coords || meta.hubCoords || HUB_COORDS.TPE;
   const stops = (pattern.stops || []).map(iata => ({
     iata,
     coords: AIRPORT_MASTER[iata]?.coords,
@@ -2468,6 +2453,9 @@ const HUB_COORDS = {
   HKG: [22.3080, 113.9185],
   CDG: [49.0097, 2.5479],
   AMS: [52.3086, 4.7639],
+  HAN: [21.2212, 105.8072],
+  SGN: [10.8188, 106.6520],
+  DAD: [16.0439, 108.1994],
 };
 const HUB_LABELS = {
   IST: "IST 伊斯坦堡",
@@ -2501,11 +2489,21 @@ const HUB_LABELS = {
   HGH: "HGH 杭州",
   HKG: "HKG 香港",
   AMS: "AMS 阿姆斯特丹",
+  HAN: "HAN 河內",
+  SGN: "SGN 胡志明市",
+  DAD: "DAD 峴港",
   BOTH: "松山／桃園雙樞紐",
 };
-// 所有航空公司代碼統一在此維護，新增/移除航空公司只需改這裡
-const AIRLINE_IDS = ["JX","BR","CI","CX","MF","MU","TK","GK","EY","IT","KE","AF","KL","NH"];
+// 航空公司清單由 AIRLINE_META 自動衍生排序：主場樞紐（TPE/RMQ/TSA）優先，其餘依英文商業名稱（commercialName）A→Z。
+// 新增航空公司只需要在 airline-data.js 的 AIRLINE_META 裡加一筆，這裡會自動排進正確位置，不用手動維護陣列。
+const HOME_HUBS = new Set(["TPE", "RMQ", "TSA"]);
 const AIRLINE_META_INFO = window.AIRLINE_META || {};
+const AIRLINE_IDS = Object.keys(AIRLINE_META_INFO).sort((a, b) => {
+  const homeA = HOME_HUBS.has(AIRLINE_META_INFO[a]?.hub);
+  const homeB = HOME_HUBS.has(AIRLINE_META_INFO[b]?.hub);
+  if (homeA !== homeB) return homeA ? -1 : 1;
+  return airlineCommercialName(a).localeCompare(airlineCommercialName(b));
+});
 const AIRLINES = Object.fromEntries(AIRLINE_IDS.map(id => [id, AIRLINE_DATA[id] || []]));
 
 function airlineCommercialName(id) {
@@ -2751,41 +2749,6 @@ window.addEventListener("DOMContentLoaded", () => {
   map.on("dragend", () => { mapWasDragged = false; });
   map.on("click", () => { mapWasDragged = false; });
 
-  // Build markers for all airlines
-  AIRLINE_IDS.forEach(id => {
-    const al = AIRLINES[id];
-    const meta = AIRLINE_META_INFO[id] || {};
-    // 同一機場若同時是這家航空公司的出發樞紐，樞紐標記本身已經會顯示地名文字，
-    // 目的地圓點就不用再疊一次文字，避免兩組標籤疊在同一個座標上。
-    const hubOrigins = new Set(al.map(x => x.origin));
-    al.forEach(d => {
-      const viewCoord = mapRouteCoord(d, id);
-      const suspended = d.status === "SUSPENDED";
-      const visibleMarker = L.circleMarker(viewCoord, {
-        radius: markerRadius, color: meta.color, fillColor: meta.color,
-        fillOpacity: suspended ? 0.15 : 0.4, weight: 1.5,
-        opacity: suspended ? 0.4 : 1,
-        dashArray: suspended ? "2,3" : null
-      });
-      if (!hubOrigins.has(d.iata)) {
-        visibleMarker.bindTooltip(d.iata, { permanent: true, direction: "right", offset: [5, 0] });
-      }
-      const hitMarker = L.circleMarker(viewCoord, {
-        radius: hitRadius,
-        stroke: false,
-        fill: true,
-        fillColor: meta.color,
-        fillOpacity: 0.01,
-        opacity: 0,
-        interactive: true,
-        bubblingMouseEvents: false
-      });
-      // 同一目的地可能有多個出發機場（例如 GK 從 NRT/KIX/NGO/FUK 都飛同一城市），
-      // 若只用 iata 當 key 會互相覆蓋，因此改用 iata+origin 複合鍵。
-      layers[id][routeKey(d)] = { marker: visibleMarker, hit: hitMarker };
-    });
-  });
-
   // Hub markers
   hubMarkers["JX_TPE"] = L.circleMarker(HUB_COORDS.TPE, { radius:8, color:"#9c6c4c", fillColor:"#9c6c4c", fillOpacity:1, weight:2, interactive:false })
     .bindTooltip("TPE 桃園", { permanent:true, direction:"right", offset:[9,0] });
@@ -2853,6 +2816,51 @@ window.addEventListener("DOMContentLoaded", () => {
     .bindTooltip("NRT 成田", { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["NH_KIX"] = L.circleMarker(HUB_COORDS.KIX, { radius:6, color:"#005BAC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
     .bindTooltip("KIX 大阪關西", { permanent:true, direction:"right", offset:[7,0] });
+  hubMarkers["VN_HAN"] = L.circleMarker(HUB_COORDS.HAN, { radius:8, color:"#0072BC", fillColor:"#0072BC", fillOpacity:1, weight:2, interactive:false })
+    .bindTooltip("HAN 河內", { permanent:true, direction:"right", offset:[9,0] });
+  hubMarkers["VN_SGN"] = L.circleMarker(HUB_COORDS.SGN, { radius:6, color:"#0072BC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
+    .bindTooltip("SGN 胡志明市", { permanent:true, direction:"right", offset:[7,0] });
+  hubMarkers["VN_DAD"] = L.circleMarker(HUB_COORDS.DAD, { radius:6, color:"#0072BC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
+    .bindTooltip("DAD 峴港", { permanent:true, direction:"right", offset:[7,0] });
+
+  // Build markers for all airlines
+  // 註：這段要放在「Hub markers」區塊之後執行，因為判斷是否要跳過標籤時
+  // 要查詢 hubMarkers 這個物件是否已經有該機場的專屬樞紐標記，藉此避免
+  // 目的地圓點跟樞紐圓點在同一座標疊出兩組文字。
+  AIRLINE_IDS.forEach(id => {
+    const al = AIRLINES[id];
+    const meta = AIRLINE_META_INFO[id] || {};
+    al.forEach(d => {
+      const viewCoord = mapRouteCoord(d, id);
+      const suspended = d.status === "SUSPENDED";
+      const visibleMarker = L.circleMarker(viewCoord, {
+        radius: markerRadius, color: meta.color, fillColor: meta.color,
+        fillOpacity: suspended ? 0.15 : 0.4, weight: 1.5,
+        opacity: suspended ? 0.4 : 1,
+        dashArray: suspended ? "2,3" : null
+      });
+      // 只有在這個機場「真的」已經有專屬樞紐標記(hubMarkers)時才跳過，
+      // 而不是只要它曾經當過某條航線的 origin 就跳過——否則像 NH 國內線網絡
+      // 裡大量只當作轉點、沒有手動建立樞紐標記的機場（NGO、ITM、HKD…等）
+      // 會兩邊都沒有標籤,完全不顯示站名。
+      if (!hubMarkers[`${id}_${d.iata}`]) {
+        visibleMarker.bindTooltip(airportRouteLabel(d.iata), { permanent: true, direction: "right", offset: [5, 0] });
+      }
+      const hitMarker = L.circleMarker(viewCoord, {
+        radius: hitRadius,
+        stroke: false,
+        fill: true,
+        fillColor: meta.color,
+        fillOpacity: 0.01,
+        opacity: 0,
+        interactive: true,
+        bubblingMouseEvents: false
+      });
+      // 同一目的地可能有多個出發機場（例如 GK 從 NRT/KIX/NGO/FUK 都飛同一城市），
+      // 若只用 iata 當 key 會互相覆蓋，因此改用 iata+origin 複合鍵。
+      layers[id][routeKey(d)] = { marker: visibleMarker, hit: hitMarker };
+    });
+  });
 
   if (!AIRLINES[activeAirline]) activeAirline = "JX";
   resetRouteFilters({ skipApply: true });
@@ -2879,7 +2887,7 @@ function showAirline(id) {
   // Enter from near to far, so the network appears to expand from each route's hub.
   const orderedRoutes = al
     .map(d => {
-      const hub = HUB_COORDS[d.origin] || meta.hubCoords || HUB_COORDS.TPE;
+      const hub = HUB_COORDS[d.origin] || AIRPORT_MASTER[d.origin]?.coords || meta.hubCoords || HUB_COORDS.TPE;
       return { d, distance: haversine(hub, d.coords) };
     })
     .sort((a, b) => a.distance - b.distance);
@@ -2963,6 +2971,13 @@ function showAirline(id) {
     ["NRT","KIX"].forEach(o => {
       const hasRoutes = al.some(d => d.origin === o);
       const marker = hubMarkers[`NH_${o}`];
+      if (hasRoutes && marker && !map.hasLayer(marker)) marker.addTo(map);
+    });
+  }
+  if (id === "VN") {
+    ["SGN","DAD"].forEach(o => {
+      const hasRoutes = al.some(d => d.origin === o);
+      const marker = hubMarkers[`VN_${o}`];
       if (hasRoutes && marker && !map.hasLayer(marker)) marker.addTo(map);
     });
   }
@@ -3831,10 +3846,6 @@ async function fetchFlightLogs() {
   }
 }
 
-function airportLabel(iata) {
-  return window.AIRPORT_MASTER?.[iata]?.city ? `${iata}` : iata;
-}
-
 let flightLogYearFilter = 'all';
 let flightLogRouteFilter = null; // 從地圖點擊某條航線時，暫存 {dep, arr} 只顯示該航線紀錄
 let flightLogSelectMode = false; // 是否處於「選取多筆紀錄合併為同一趟」模式
@@ -4046,16 +4057,6 @@ function cityOf(iata) {
   return window.AIRPORT_MASTER?.[iata]?.city || iata;
 }
 
-function toggleTicketEditMenu(event, key) {
-  event.stopPropagation();
-  document.querySelectorAll('.ticket-edit-menu.show').forEach(el => {
-    if (el.id !== `ticket-menu-${key}`) el.classList.remove('show');
-  });
-  document.getElementById(`ticket-menu-${key}`)?.classList.toggle('show');
-}
-document.addEventListener('click', () => {
-  document.querySelectorAll('.ticket-edit-menu.show').forEach(el => el.classList.remove('show'));
-});
 
 function renderTicketCard(legs, crossYear) {
   const isMultiLeg = legs.length > 1;

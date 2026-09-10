@@ -45,6 +45,7 @@ window.AIRLINE_META = {
   AF: { legalName:"法國航空公司", commercialName:"Air France", shortName:"法國航空", fullName:"Air France", hub:"CDG", alliance:"SkyTeam", color:"#002157", colorDim:"rgba(0,33,87,0.35)", hubCoords:[49.0097,2.5479] },
   KL: { legalName:"荷蘭皇家航空", commercialName:"KLM Royal Dutch Airlines", shortName:"荷蘭航空", fullName:"KLM Royal Dutch Airlines", hub:"AMS", alliance:"SkyTeam", color:"#00A1DE", colorDim:"rgba(0,161,222,0.35)", hubCoords:[52.3086,4.7639] },
   NH: { legalName:"全日本空輸株式會社", commercialName:"All Nippon Airways", shortName:"全日空", fullName:"All Nippon Airways", hub:"HND", alliance:"Star Alliance", color:"#005BAC", colorDim:"rgba(0,91,172,0.35)", hubCoords:[35.5494,139.7798] },
+  VN: { legalName:"越南國家航空公司", commercialName:"Vietnam Airlines", shortName:"越南航空", fullName:"Vietnam Airlines", hub:"HAN", alliance:"SkyTeam", color:"#0072BC", colorDim:"rgba(0,114,188,0.35)", hubCoords:[21.2212,105.8072] },
 };
 
 window.AIRPORT_MASTER = {
@@ -219,6 +220,7 @@ window.AIRPORT_MASTER = {
   OKJ: { city:"岡山", airportName:"Okayama Momotaro Airport", country:"Japan", coords:[34.7569,133.8551], region:"JAPAN" },
   ONT: { city:"安大略", airportName:"Ontario International Airport", country:"USA", coords:[34.056,-117.6012], region:"NORTH_AMERICA" },
   ORD: { city:"芝加哥", airportName:"O'Hare International Airport", country:"USA", coords:[41.9742,-87.9073], region:"NORTH_AMERICA" },
+  ORY: { city:"巴黎", airportName:"Paris-Orly Airport", country:"France", coords:[48.7233,2.3794], region:"EUROPE" },
   OTP: { city:"布加勒斯特", airportName:"Henri Coanda International Airport", country:"Romania", coords:[44.5711,26.085], region:"EUROPE" },
   PEK: { city:"北京首都", airportName:"Beijing Capital International Airport", country:"China", coords:[40.0799,116.6031], region:"CHINA" },
   PEN: { city:"檳城", airportName:"Penang International Airport", country:"Malaysia", coords:[5.2971,100.2769], region:"SOUTHEAST_ASIA" },
@@ -336,6 +338,7 @@ window.AIRLINE_DATA = {
   AF: [],
   KL: [],
   NH: [],
+  VN: [],
 
   // ─── 星宇航空 JX ──────────────────────────────────────────────────────────
   JX: [
@@ -978,6 +981,35 @@ window.AIRLINE_DATA = {
   });
 })();
 
+// ─── 全日本空輸 NH：2026 夏季 ANA／ANA Wings 實飛國內線 ───────────────────
+(() => {
+  const airportAdds = [
+    ["ITM","大阪伊丹","Osaka Itami Airport",34.7855,135.4382],["WKJ","稚內","Wakkanai Airport",45.4042,141.801],
+    ["MBE","紋別","Monbetsu Airport",44.3039,143.404],["MMB","女滿別","Memanbetsu Airport",43.8806,144.164],
+    ["SHB","中標津","Nakashibetsu Airport",43.5775,144.96],["KUH","釧路","Kushiro Airport",42.7333,144.193],
+    ["OBO","帶廣","Tokachi-Obihiro Airport",42.7333,143.217],["ONJ","大館能代","Odate-Noshiro Airport",40.1919,140.371],
+    ["SYO","庄內","Shonai Airport",38.8122,139.787],["NTQ","能登","Noto Airport",37.2931,136.962],
+    ["HAC","八丈島","Hachijojima Airport",33.115,139.785],["IWK","岩國","Iwakuni Kintaikyo Airport",34.1439,132.236],
+    ["UBJ","山口宇部","Yamaguchi Ube Airport",33.93,131.279],["IWJ","萩石見","Iwami Airport",34.6764,131.79],
+    ["KKJ","北九州","Kitakyushu Airport",33.8459,131.035],["MMY","宮古島","Miyako Airport",24.7828,125.295],
+    ["FSZ","靜岡","Shizuoka Airport",34.7961,138.189],["RIS","利尻","Rishiri Airport",45.242,141.186],
+    ["FUJ","五島福江","Fukue Airport",32.6663,128.833],["TSJ","對馬","Tsushima Airport",34.2845,129.331],
+  ];
+  airportAdds.forEach(([iata,city,airportName,lat,lon]) => {
+    if (!window.AIRPORT_MASTER[iata]) window.AIRPORT_MASTER[iata] = { city, airportName, country:"Japan", coords:[lat,lon], region:"JAPAN" };
+  });
+  const specs = `HND:ITM ITM:HND HND:KIX KIX:HND HND:UKB UKB:HND HND:CTS CTS:HND HND:FUK FUK:HND HND:NGO NGO:HND HND:WKJ WKJ:HND HND:MBE MBE:HND HND:MMB MMB:HND HND:AKJ AKJ:HND HND:SHB SHB:HND HND:KUH KUH:HND HND:OBO OBO:HND HND:HKD HKD:HND HND:ONJ ONJ:HND HND:AXT AXT:HND HND:SYO SYO:HND HND:TOY TOY:HND HND:KMQ KMQ:HND HND:NTQ NTQ:HND HND:HAC HAC:HND HND:OKJ OKJ:HND HND:HIJ HIJ:HND HND:IWK IWK:HND HND:UBJ UBJ:HND HND:TTJ TTJ:HND HND:YGJ YGJ:HND HND:IWJ IWJ:HND HND:TKS TKS:HND HND:TAK TAK:HND HND:MYJ MYJ:HND HND:KCZ KCZ:HND HND:HSG HSG:HND HND:OIT OIT:HND HND:KMJ KMJ:HND HND:NGS NGS:HND HND:KMI KMI:HND HND:KOJ KOJ:HND HND:OKA OKA:HND HND:MMY MMY:HND HND:ISG ISG:HND NRT:ITM ITM:NRT NRT:NGO NGO:NRT NRT:CTS CTS:NRT ITM:CTS CTS:ITM ITM:FUK FUK:ITM ITM:KUH KUH:ITM ITM:HKD HKD:ITM ITM:AOJ AOJ:ITM ITM:AXT AXT:ITM ITM:SDJ SDJ:ITM ITM:FKS FKS:ITM ITM:KIJ KIJ:ITM ITM:IWJ IWJ:ITM ITM:MYJ MYJ:ITM ITM:KCZ KCZ:ITM ITM:OIT OIT:ITM ITM:KMJ KMJ:ITM ITM:NGS NGS:ITM ITM:KMI KMI:ITM ITM:KOJ KOJ:ITM ITM:OKA OKA:ITM ITM:MMY MMY:ITM ITM:ISG ISG:ITM KIX:CTS CTS:KIX KIX:OKA OKA:KIX KIX:MMY MMY:KIX KIX:ISG ISG:KIX UKB:CTS CTS:UKB NGO:CTS CTS:NGO NGO:FUK FUK:NGO NGO:MMB MMB:NGO NGO:AKJ AKJ:NGO NGO:HKD HKD:NGO NGO:SDJ SDJ:NGO NGO:NGS NGS:NGO NGO:KMI KMI:NGO NGO:KOJ KOJ:NGO NGO:OKA OKA:NGO NGO:MMY MMY:NGO NGO:ISG ISG:NGO FSZ:CTS CTS:FSZ FSZ:OKA OKA:FSZ CTS:FUK FUK:CTS CTS:WKJ WKJ:CTS CTS:RIS RIS:CTS CTS:MMB MMB:CTS CTS:SHB SHB:CTS CTS:KUH KUH:CTS CTS:HKD HKD:CTS CTS:AOJ AOJ:CTS CTS:AXT AXT:CTS CTS:SDJ SDJ:CTS CTS:FKS FKS:CTS CTS:KIJ KIJ:CTS CTS:TOY TOY:CTS CTS:KMQ KMQ:CTS CTS:OKJ OKJ:CTS CTS:HIJ HIJ:CTS SDJ:OKA OKA:SDJ KMQ:FUK FUK:KMQ HIJ:OKA OKA:HIJ IWK:OKA OKA:IWK TAK:OKA OKA:TAK MYJ:OKA OKA:MYJ FUK:TSJ TSJ:FUK FUK:FUJ FUJ:FUK FUK:KMI KMI:FUK FUK:OKA OKA:FUK KMJ:OKA OKA:KMJ OKA:MMY MMY:OKA OKA:ISG ISG:OKA MMY:ISG ISG:MMY`.split(" ");
+  const existing = new Set(window.AIRLINE_DATA.NH.map(route => `${route.origin}:${route.iata}`));
+  specs.forEach(spec => {
+    const [origin,iata] = spec.split(":"); const key = `${origin}:${iata}`;
+    if (existing.has(key)) return;
+    const airport = window.AIRPORT_MASTER[iata];
+    if (!airport) throw new Error(`NH domestic airport metadata missing: ${iata}`);
+    window.AIRLINE_DATA.NH.push({ iata, ...airport, frequency:null, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:[], origin, airline:"NH", alliance:"Star Alliance", status:"ACTIVE", nonstop:true, stops:[] });
+    existing.add(key);
+  });
+})();
+
 // ─── 法國航空 AF：補齊 2026 年現役歐洲／區域客運航點 ──────────────────────
 // 以 AF 官方 2026 航網公告及當期航點清單交叉整理；僅含 AF 實際承運的
 // ACTIVE／SEASONAL 航線。班號與頻率未逐條核實，依資料政策保留空值。
@@ -1609,6 +1641,53 @@ window.AIRLINE_DATA.MF.push(
 // AF 補齊區塊須在完整機場主檔與既有 AF 航線載入後執行。
 window.applyAirFranceMinimalRoutes();
 delete window.applyAirFranceMinimalRoutes;
+
+// ── Vietnam Airlines VN：2026 年現役實際承運客運航網 ─────────────────────────
+(() => {
+  const airportAdds = [
+    ["BMV","邦美蜀","Buon Ma Thuot Airport","Vietnam",12.6683,108.12,"SOUTHEAST_ASIA"],
+    ["DIN","奠邊府","Dien Bien Phu Airport","Vietnam",21.3975,103.008,"SOUTHEAST_ASIA"],
+    ["DLI","大叻","Lien Khuong Airport","Vietnam",11.7500,108.3670,"SOUTHEAST_ASIA"],
+    ["HPH","海防","Cat Bi International Airport","Vietnam",20.8194,106.7250,"SOUTHEAST_ASIA"],
+    ["HUI","順化","Phu Bai International Airport","Vietnam",16.4015,107.7031,"SOUTHEAST_ASIA"],
+    ["PXU","波來古","Pleiku Airport","Vietnam",14.0045,108.0172,"SOUTHEAST_ASIA"],
+    ["TBB","綏和","Tuy Hoa Airport","Vietnam",13.0496,109.3340,"SOUTHEAST_ASIA"],
+    ["THD","清化","Tho Xuan Airport","Vietnam",19.9017,105.4678,"SOUTHEAST_ASIA"],
+    ["UIH","歸仁","Phu Cat Airport","Vietnam",13.9550,109.0420,"SOUTHEAST_ASIA"],
+    ["VCL","朱萊","Chu Lai Airport","Vietnam",15.4033,108.7060,"SOUTHEAST_ASIA"],
+    ["VCA","芹苴","Can Tho International Airport","Vietnam",10.0851,105.7120,"SOUTHEAST_ASIA"],
+    ["VCS","崑島","Con Dao Airport","Vietnam",8.7318,106.6330,"SOUTHEAST_ASIA"],
+    ["VDH","洞海","Dong Hoi Airport","Vietnam",17.5150,106.5906,"SOUTHEAST_ASIA"],
+    ["VII","榮市","Vinh International Airport","Vietnam",18.7376,105.6715,"SOUTHEAST_ASIA"],
+  ];
+  airportAdds.forEach(([iata,city,airportName,country,lat,lon,region]) => {
+    if (!window.AIRPORT_MASTER[iata]) window.AIRPORT_MASTER[iata] = { city, airportName, country, coords:[lat,lon], region };
+  });
+
+  // 國內航段雙向列載；來源為越航當期航點清單，僅保留 VN 實際承運航段。
+  const domesticPairs = [
+    ["HAN","SGN"], ["HAN","DAD"], ["HAN","HUI"], ["HAN","VII"], ["HAN","HPH"], ["HAN","DLI"], ["HAN","UIH"], ["HAN","VCA"], ["HAN","CXR"], ["HAN","PQC"], ["HAN","BMV"], ["HAN","PXU"], ["HAN","TBB"], ["HAN","VCL"], ["HAN","DIN"],
+    ["SGN","DAD"], ["SGN","CXR"], ["SGN","PQC"], ["SGN","HUI"], ["SGN","VII"], ["SGN","HPH"], ["SGN","DLI"], ["SGN","UIH"], ["SGN","THD"], ["SGN","BMV"], ["SGN","PXU"], ["SGN","TBB"], ["SGN","VCL"], ["SGN","VDH"],
+    ["DAD","DLI"], ["DAD","HPH"], ["DAD","VCA"], ["DAD","CXR"], ["DAD","BMV"], ["VCA","PQC"], ["VCA","DLI"], ["VCA","VCS"], ["VCS","SGN"], ["HAN","VDH"],
+  ];
+  // 國際線以越南出發基地記錄，避免將海外方向重複建成另一條非基地航線。
+  const international = [
+    ["HAN","BKK"], ["HAN","ICN"], ["HAN","CAN"], ["HAN","TPE"], ["HAN","KUL"], ["HAN","HKG"], ["HAN","VTE"], ["HAN","PUS"], ["HAN","MNL"], ["HAN","HND"], ["HAN","KIX"], ["HAN","NGO"], ["HAN","SAI"], ["HAN","FUK"], ["HAN","PVG"], ["HAN","PEK"], ["HAN","CGK"], ["HAN","MEL"], ["HAN","SYD"], ["HAN","DEL"], ["HAN","BLR"], ["HAN","LHR"], ["HAN","BOM"], ["HAN","SIN"], ["HAN","KHH"], ["HAN","NRT"], ["HAN","FRA"], ["HAN","CDG"], ["HAN","CEB"], ["HAN","MXP"],
+    ["SGN","BKK"], ["SGN","SIN"], ["SGN","ICN"], ["SGN","KHH"], ["SGN","DPS"], ["SGN","NRT"], ["SGN","KUL"], ["SGN","TPE"], ["SGN","PUS"], ["SGN","KTI"], ["SGN","HKG"], ["SGN","KIX"], ["SGN","CGK"], ["SGN","PVG"], ["SGN","FRA"], ["SGN","PKX"], ["SGN","CDG"], ["SGN","SFO"], ["SGN","HKT"], ["SGN","SYD"], ["SGN","MEL"], ["SGN","PER"], ["SGN","CAN"], ["SGN","SAI"], ["SGN","MNL"], ["SGN","NGO"], ["SGN","BOM"], ["SGN","CPH"],
+    ["DAD","ICN"], ["DAD","NRT"], ["DAD","BKK"], ["DAD","KIX"], ["CXR","PUS"],
+  ];
+  const existing = new Set(window.AIRLINE_DATA.VN.map(route => `${route.origin}:${route.iata}`));
+  const append = ([origin, iata]) => {
+    const key = `${origin}:${iata}`;
+    if (existing.has(key)) return;
+    const airport = window.AIRPORT_MASTER[iata];
+    if (!airport) throw new Error(`VN route airport missing from AIRPORT_MASTER: ${iata}`);
+    window.AIRLINE_DATA.VN.push({ iata, ...airport, frequency:null, frequencyType:"weekly", lastUpdated:"2026-09", flightNumbers:[], origin, airline:"VN", alliance:"SkyTeam", status:"ACTIVE", nonstop:true, stops:[] });
+    existing.add(key);
+  };
+  domesticPairs.forEach(([a,b]) => { append([a,b]); append([b,a]); });
+  international.forEach(append);
+})();
 
 // ─── 荷蘭皇家航空 KL：2026 年 AMS 實際承運客運航網 ─────────────────────────
 // 航點以 KLM 2026 年季節網路及當期航點清單交叉整理；班號與頻率未逐條核實。
