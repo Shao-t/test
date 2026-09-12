@@ -49,7 +49,10 @@
     #map { position: absolute; inset: 0; z-index: 1; }
 
     .leaflet-tile { filter: saturate(0.45) brightness(1.06); }
+    .hub-label-name { display: none; }
+    .zoomed-in-labels .hub-label-name { display: inline; }
     .leaflet-control-zoom { display: none !important; }
+
     .leaflet-control-attribution {
       background: rgba(255,255,255,.55) !important;
       font-size: 9px !important; padding: 0 4px !important;
@@ -822,8 +825,8 @@
       #airline-chip { width: 100%; min-width: 0; padding: 8px 10px; }
       .airline-chip-label { overflow: hidden; text-overflow: ellipsis; }
       #airline-picker-panel {
-        position: absolute; top: calc(100% + 10px); left: 0;
-        width: min(330px, calc(100vw - 20px)); max-width: none;
+        position: fixed; top: 0; left: 12px; right: 12px;
+        width: auto; max-width: none;
         grid-template-columns: 1fr 1fr; margin-top: 0;
         box-shadow: 0 20px 56px rgba(2,7,16,.46);
       }
@@ -2084,6 +2087,11 @@ function airportRouteLabel(iata) {
   const city = AIRPORT_MASTER[iata]?.city;
   return city ? `${iata} ${city}` : iata;
 }
+function hubLabelHtml(label) {
+  const sp = label.indexOf(" ");
+  if (sp < 0) return label;
+  return label.slice(0, sp) + '<span class="hub-label-name">' + label.slice(sp) + '</span>';
+}
 function routePatternMetrics(d, id, pattern) {
   const meta = AIRLINE_META_INFO[id] || {};
   const originCoord = HUB_COORDS[d.origin] || AIRPORT_MASTER[d.origin]?.coords || meta.hubCoords || HUB_COORDS.TPE;
@@ -2721,6 +2729,11 @@ window.addEventListener("DOMContentLoaded", () => {
     referrerPolicy: "strict-origin-when-cross-origin",
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
   }).addTo(map);
+  function updateHubLabelZoom() {
+    map.getContainer().classList.toggle("zoomed-in-labels", map.getZoom() >= 6);
+  }
+  map.on("zoomend", updateHubLabelZoom);
+  updateHubLabelZoom();
   map.on("move zoom resize", syncRoutePopupPosition);
   map.on("click", () => {
     hideInfoCard();
@@ -2735,77 +2748,77 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // Hub markers
   hubMarkers["JX_TPE"] = L.circleMarker(HUB_COORDS.TPE, { radius:8, color:"#9c6c4c", fillColor:"#9c6c4c", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("TPE 桃園", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("TPE 桃園"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["JX_RMQ"] = L.circleMarker(HUB_COORDS.RMQ, { radius:6, color:"#9c6c4c", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("RMQ 台中", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("RMQ 台中"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["BR_TPE"] = L.circleMarker(HUB_COORDS.TPE, { radius:8, color:"#00a86b", fillColor:"#00a86b", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("TPE 桃園", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("TPE 桃園"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["BR_TSA"] = L.circleMarker(HUB_COORDS.TSA, { radius:6, color:"#00a86b", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("TSA 松山", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("TSA 松山"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["CI_TPE"] = L.circleMarker(HUB_COORDS.TPE, { radius:8, color:"#003087", fillColor:"#003087", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("TPE 桃園", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("TPE 桃園"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["CI_TSA"] = L.circleMarker(HUB_COORDS.TSA, { radius:6, color:"#003087", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("TSA 松山", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("TSA 松山"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["CI_KHH"] = L.circleMarker(HUB_COORDS.KHH, { radius:6, color:"#003087", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("KHH 高雄", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("KHH 高雄"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["MU_PVG"] = L.circleMarker(HUB_COORDS.PVG, { radius:8, color:"#d10000", fillColor:"#d10000", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("PVG 浦東", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("PVG 浦東"), { permanent:true, direction:"right", offset:[9,0] });
   ["SHA","NKG","NGB","WUH","TAO","TFU","KMG","XIY","PKX"].forEach(origin => {
     hubMarkers[`MU_${origin}`] = L.circleMarker(HUB_COORDS[origin], { radius:6, color:"#d10000", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-      .bindTooltip(HUB_LABELS[origin], { permanent:true, direction:"right", offset:[7,0] });
+      .bindTooltip(hubLabelHtml(HUB_LABELS[origin]), { permanent:true, direction:"right", offset:[7,0] });
   });
   hubMarkers["MF_XMN"] = L.circleMarker(HUB_COORDS.XMN, { radius:8, color:"#0072BC", fillColor:"#0072BC", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("XMN 廈門", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("XMN 廈門"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["MF_FOC"] = L.circleMarker(HUB_COORDS.FOC, { radius:6, color:"#0072BC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("FOC 福州", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("FOC 福州"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["MF_HGH"] = L.circleMarker(HUB_COORDS.HGH, { radius:6, color:"#0072BC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("HGH 杭州", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("HGH 杭州"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["GK_NRT"] = L.circleMarker(HUB_COORDS.NRT, { radius:8, color:"#FF6600", fillColor:"#FF6600", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("NRT 成田", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("NRT 成田"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["EY_AUH"] = L.circleMarker(HUB_COORDS.AUH, { radius:8, color:"#BD8B13", fillColor:"#BD8B13", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("AUH 阿布達比", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("AUH 阿布達比"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["IT_TPE"] = L.circleMarker(HUB_COORDS.TPE, { radius:8, color:"#F6A800", fillColor:"#F6A800", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("TPE 桃園", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("TPE 桃園"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["CX_HKG"] = L.circleMarker(HUB_COORDS.HKG, { radius:8, color:"#006564", fillColor:"#006564", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("HKG 香港", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("HKG 香港"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["TK_IST"] = L.circleMarker(HUB_COORDS.IST, { radius:8, color:"#E30A17", fillColor:"#E30A17", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("IST 伊斯坦堡", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("IST 伊斯坦堡"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["IT_TNN"] = L.circleMarker(HUB_COORDS.TNN, { radius:6, color:"#F6A800", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("TNN 台南", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("TNN 台南"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["BR_KHH"] = L.circleMarker(HUB_COORDS.KHH, { radius:6, color:"#00a86b", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("KHH 高雄", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("KHH 高雄"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["KE_ICN"] = L.circleMarker(HUB_COORDS.ICN, { radius:8, color:"#5B9BD5", fillColor:"#5B9BD5", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("ICN 首爾仁川", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("ICN 首爾仁川"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["KE_GMP"] = L.circleMarker(HUB_COORDS.GMP, { radius:6, color:"#5B9BD5", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("GMP 金浦", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("GMP 金浦"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["KE_CJU"] = L.circleMarker(HUB_COORDS.CJU, { radius:6, color:"#5B9BD5", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("CJU 濟州", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("CJU 濟州"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["KE_PUS"] = L.circleMarker(HUB_COORDS.PUS, { radius:6, color:"#5B9BD5", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("PUS 釜山", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("PUS 釜山"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["GK_KIX"] = L.circleMarker(HUB_COORDS.KIX, { radius:6, color:"#FF6600", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("KIX 大阪關西", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("KIX 大阪關西"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["GK_NGO"] = L.circleMarker(HUB_COORDS.NGO, { radius:6, color:"#FF6600", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("NGO 名古屋", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("NGO 名古屋"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["GK_FUK"] = L.circleMarker(HUB_COORDS.FUK, { radius:6, color:"#FF6600", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("FUK 福岡", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("FUK 福岡"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["CI_RMQ"] = L.circleMarker(HUB_COORDS.RMQ, { radius:6, color:"#003087", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("RMQ 台中", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("RMQ 台中"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["AF_CDG"] = L.circleMarker(HUB_COORDS.CDG, { radius:8, color:"#002157", fillColor:"#002157", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("CDG 巴黎", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("CDG 巴黎"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["KL_AMS"] = L.circleMarker(HUB_COORDS.AMS, { radius:8, color:"#00A1DE", fillColor:"#00A1DE", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("AMS 阿姆斯特丹", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("AMS 阿姆斯特丹"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["NH_HND"] = L.circleMarker(HUB_COORDS.HND, { radius:8, color:"#005BAC", fillColor:"#005BAC", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("HND 羽田", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("HND 羽田"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["NH_NRT"] = L.circleMarker(HUB_COORDS.NRT, { radius:6, color:"#005BAC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("NRT 成田", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("NRT 成田"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["NH_KIX"] = L.circleMarker(HUB_COORDS.KIX, { radius:6, color:"#005BAC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("KIX 大阪關西", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("KIX 大阪關西"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["VN_HAN"] = L.circleMarker(HUB_COORDS.HAN, { radius:8, color:"#0072BC", fillColor:"#0072BC", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("HAN 河內", { permanent:true, direction:"right", offset:[9,0] });
+    .bindTooltip(hubLabelHtml("HAN 河內"), { permanent:true, direction:"right", offset:[9,0] });
   hubMarkers["VN_SGN"] = L.circleMarker(HUB_COORDS.SGN, { radius:6, color:"#0072BC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("SGN 胡志明市", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("SGN 胡志明市"), { permanent:true, direction:"right", offset:[7,0] });
   hubMarkers["VN_DAD"] = L.circleMarker(HUB_COORDS.DAD, { radius:6, color:"#0072BC", fillColor:"#fff", fillOpacity:1, weight:2, interactive:false })
-    .bindTooltip("DAD 峴港", { permanent:true, direction:"right", offset:[7,0] });
+    .bindTooltip(hubLabelHtml("DAD 峴港"), { permanent:true, direction:"right", offset:[7,0] });
 
   // Build markers for all airlines
   // 註：這段要放在「Hub markers」區塊之後執行，因為判斷是否要跳過標籤時
@@ -2828,7 +2841,7 @@ window.addEventListener("DOMContentLoaded", () => {
       // 裡大量只當作轉點、沒有手動建立樞紐標記的機場（NGO、ITM、HKD…等）
       // 會兩邊都沒有標籤,完全不顯示站名。
       if (!hubMarkers[`${id}_${d.iata}`]) {
-        visibleMarker.bindTooltip(airportRouteLabel(d.iata), { permanent: true, direction: "right", offset: [5, 0] });
+        visibleMarker.bindTooltip(hubLabelHtml(airportRouteLabel(d.iata)), { permanent: true, direction: "right", offset: [5, 0] });
       }
       const hitMarker = L.circleMarker(viewCoord, {
         radius: hitRadius,
@@ -3063,6 +3076,13 @@ function updateAirlinePicker() {
 function openAirlinePicker() {
   closeFilterPanel();
   const panel = document.getElementById("airline-picker-panel");
+  const isMobile = window.matchMedia("(max-width: 860px), (pointer: coarse)").matches;
+  if (isMobile) {
+    const btnRect = document.getElementById("airline-chip").getBoundingClientRect();
+    panel.style.top = Math.round(btnRect.bottom + 8) + "px";
+  } else {
+    panel.style.top = "";
+  }
   panel.classList.add("open");
   panel.setAttribute("aria-hidden", "false");
   document.getElementById("airline-chip").classList.add("open");
